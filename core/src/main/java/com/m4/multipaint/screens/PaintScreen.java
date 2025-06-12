@@ -4,84 +4,62 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.m4.multipaint.MultiPaint;
+import com.m4.multipaint.drawing.Brush;
+import com.m4.multipaint.drawing.Canvas;
 
 public class PaintScreen implements Screen {
-
     final MultiPaint game;
-    Pixmap pixmap;
-    Texture pixmaptex;
-
+    private Canvas canvas;
+    private Vector2 lastDrawPosition = null;
+    private Brush brush;
 
     public PaintScreen(final MultiPaint game) {
         this.game = game;
-        pixmap = new Pixmap( game.viewport.getScreenWidth(), game.viewport.getScreenHeight(), Pixmap.Format.RGBA8888 );
-        pixmap.setColor(Color.WHITE);
-        pixmap.fillRectangle(0,0,game.viewport.getScreenWidth(),game.viewport.getScreenHeight());
-        pixmaptex = new Texture( pixmap );
-        this.pixmap.setColor(Color.BLACK);
-
-    }
-
-    @Override
-    public void show() {
-
+        int width = (int) game.viewport.getWorldWidth();
+        int height = (int) game.viewport.getWorldHeight();
+        brush = new Brush(Color.BLACK, 5);
+        canvas = new Canvas(width, height);
     }
 
     @Override
     public void render(float delta) {
-        input();
-        //logic();
-        draw();
-    }
-
-    private void input() {
-        float speed = 4f;
-        float delta = Gdx.graphics.getDeltaTime();
-
-        if (Gdx.input.isTouched() && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            this.pixmap.fillCircle(Gdx.input.getX(), Gdx.input.getY(),5);
-            pixmaptex = new Texture( pixmap );
-        }
-    }
-
-    private void logic() {
-    }
-
-    private void draw() {
+        handleInput();
         game.viewport.apply();
+        game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
         game.batch.begin();
-
-        float worldWidth = game.viewport.getWorldWidth();
-        float worldHeight = game.viewport.getWorldHeight();
-
-        game.batch.draw(pixmaptex, 0, 0, worldWidth, worldHeight);
-
-
+        canvas.render(game.batch);
         game.batch.end();
     }
 
-    @Override
-    public void resize(int width, int height) {
-        game.viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    private void handleInput() {
+        if (Gdx.input.isTouched() && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            Vector2 current = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+            game.viewport.project(current);
+
+            if (lastDrawPosition != null) {
+                canvas.drawLine(brush, (int) lastDrawPosition.x, (int) lastDrawPosition.y, (int) current.x, (int) current.y);
+            } else {
+                canvas.drawBrush(brush, (int) current.x, (int) current.y);
+            }
+
+            lastDrawPosition = current;
+        } else {
+            lastDrawPosition = null;
+        }
     }
 
-    @Override
-    public void hide() {
+    @Override public void resize(int width, int height) {
+        game.viewport.update(width, height, true);
     }
 
-    @Override
-    public void pause() {
+    @Override public void dispose() {
+        canvas.dispose();
     }
 
-    @Override
-    public void resume() {
-    }
-
-    @Override
-    public void dispose() {
-        pixmap.dispose();
-    }
+    @Override public void show() {}
+    @Override public void hide() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
 }
