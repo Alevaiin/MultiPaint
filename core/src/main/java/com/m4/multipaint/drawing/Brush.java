@@ -30,6 +30,8 @@ public class Brush {
     }
 
     public void setRadius(int radius) {
+        if(radius < 1)
+            return;
         this.radius = radius;
     }
 }

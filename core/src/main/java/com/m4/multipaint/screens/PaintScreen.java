@@ -11,15 +11,15 @@ import com.m4.multipaint.drawing.Canvas;
 
 public class PaintScreen implements Screen {
     final MultiPaint game;
-    private Canvas canvas;
+    private final Canvas canvas;
     private Vector2 lastDrawPosition = null;
-    private Brush brush;
+    private final Brush brush;
 
     public PaintScreen(final MultiPaint game) {
         this.game = game;
         int width = (int) game.viewport.getWorldWidth();
         int height = (int) game.viewport.getWorldHeight();
-        brush = new Brush(Color.BLACK, 5);
+        brush = new Brush(Color.BLACK, 1);
         canvas = new Canvas(width, height);
     }
 
@@ -47,6 +47,21 @@ public class PaintScreen implements Screen {
             lastDrawPosition = current;
         } else {
             lastDrawPosition = null;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+            this.brush.setRadius(this.brush.getRadius() + 1);
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+            this.brush.setRadius(this.brush.getRadius() - 1);
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.B)){
+            this.brush.setColor(Color.WHITE);
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.N)){
+            this.brush.setColor(Color.BLACK);
         }
     }
 
