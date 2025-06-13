@@ -10,6 +10,7 @@ public class Canvas {
     private Texture texture;
     private final int width;
     private final int height;
+    private boolean dirty = true;
 
     public Canvas(int width, int height) {
         this.width = width;
@@ -24,26 +25,36 @@ public class Canvas {
 
     public void drawBrush(Brush brush, int x, int y) {
         brush.apply(pixmap, x, y);
-        refreshTexture();
+        dirty = true;
     }
 
-    public void drawLine(Brush brush, int x0, int y0, int x1, int y1) {
-        int dx = Math.abs(x1 - x0);
-        int dy = Math.abs(y1 - y0);
-        int sx = x0 < x1 ? 1 : -1;
-        int sy = y0 < y1 ? 1 : -1;
-        int err = dx - dy;
+    public void drawLine(Brush brush, int startX, int startY, int endX, int endY) {
+        int deltaX = Math.abs(endX - startX);
+        int deltaY = Math.abs(endY - startY);
+        int stepX = startX < endX ? 1 : -1;
+        int stepY = startY < endY ? 1 : -1;
+        int error = deltaX - deltaY;
 
         while (true) {
-            brush.apply(pixmap, x0, y0);
-            if (x0 == x1 && y0 == y1) break;
-            int e2 = 2 * err;
-            if (e2 > -dy) { err -= dy; x0 += sx; }
-            if (e2 < dx) { err += dx; y0 += sy; }
+            brush.apply(pixmap, startX, startY);
+            if (startX == endX && startY == endY) break;
+
+            int doubleError = 2 * error;
+
+            if (doubleError > -deltaY) {
+                error -= deltaY;
+                startX += stepX;
+            }
+
+            if (doubleError < deltaX) {
+                error += deltaX;
+                startY += stepY;
+            }
         }
 
-        refreshTexture();
+        dirty = true;
     }
+
 
     private void refreshTexture() {
         if (texture != null) texture.dispose();
@@ -51,6 +62,12 @@ public class Canvas {
     }
 
     public void render(SpriteBatch batch) {
+        if (dirty) {
+            if (texture != null) texture.dispose();
+            texture = new Texture(pixmap);
+            dirty = false;
+        }
+
         batch.draw(texture, 0, 0);
     }
 
