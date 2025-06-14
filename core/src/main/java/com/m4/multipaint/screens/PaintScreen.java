@@ -6,30 +6,37 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.m4.multipaint.MultiPaint;
-import com.m4.multipaint.drawing.Brush;
-import com.m4.multipaint.drawing.Canvas;
+import com.m4.multipaint.drawing.*;
 
 public class PaintScreen implements Screen {
-    final MultiPaint game;
-    private final Canvas canvas;
-    private Vector2 lastDrawPosition = null;
-    private final Brush brush;
+    private final MultiPaint game;
+    private final DrawSession session;
+    private final User localUser;
+    private Vector2 lastDrawPosition;
 
-    public PaintScreen(final MultiPaint game) {
+    public PaintScreen(MultiPaint game) {
         this.game = game;
-        int width = (int) game.viewport.getWorldWidth();
-        int height = (int) game.viewport.getWorldHeight();
-        brush = new Brush(Color.BLACK, 1);
-        canvas = new Canvas(width, height);
+
+        int canvasWidth = (int) game.viewport.getWorldWidth();
+        int canvasHeight = (int) game.viewport.getWorldHeight();
+
+        Canvas canvas = new Canvas(canvasWidth, canvasHeight);
+        this.session = new DrawSession(canvas);
+
+        this.localUser = new User("local", Color.BLACK, 5);
+        this.session.addUser(localUser);
     }
 
     @Override
     public void render(float delta) {
+        updateBrushSettings();
         handleInput();
+
         game.viewport.apply();
         game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
+
         game.batch.begin();
-        canvas.render(game.batch);
+        session.getCanvas().render(game.batch);
         game.batch.end();
     }
 
@@ -39,42 +46,44 @@ public class PaintScreen implements Screen {
             game.viewport.project(current);
 
             if (lastDrawPosition != null) {
-                canvas.drawLine(brush, (int) lastDrawPosition.x, (int) lastDrawPosition.y, (int) current.x, (int) current.y);
+                DrawAction action = new DrawAction(localUser, (int) lastDrawPosition.x, (int) lastDrawPosition.y, (int) current.x, (int) current.y);
+                session.applyAction(action);
             } else {
-                canvas.drawBrush(brush, (int) current.x, (int) current.y);
+                session.getCanvas().drawBrush(localUser.getBrush(), (int) current.x, (int) current.y);
             }
-
             lastDrawPosition = current;
         } else {
             lastDrawPosition = null;
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.UP)){
-            this.brush.setRadius(this.brush.getRadius() + 1);
+    }
+
+    private void updateBrushSettings() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP) ) {
+            localUser.setBrushSize(localUser.getBrushSize() + 1);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+            localUser.setBrushSize(localUser.getBrushSize() - 1);
         }
 
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-            this.brush.setRadius(this.brush.getRadius() - 1);
-        }
-
-        if(Gdx.input.isKeyPressed(Input.Keys.B)){
-            this.brush.setColor(Color.WHITE);
-        }
-
-        if(Gdx.input.isKeyPressed(Input.Keys.N)){
-            this.brush.setColor(Color.BLACK);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+            Color current = localUser.getColor();
+            Color newColor = current.equals(Color.BLACK) ? Color.WHITE : Color.BLACK;
+            localUser.setColor(newColor);
         }
     }
 
-    @Override public void resize(int width, int height) {
+    @Override
+    public void resize(int width, int height) {
         game.viewport.update(width, height, true);
-    }
-
-    @Override public void dispose() {
-        canvas.dispose();
     }
 
     @Override public void show() {}
     @Override public void hide() {}
     @Override public void pause() {}
     @Override public void resume() {}
+
+    @Override
+    public void dispose() {
+        session.getCanvas().dispose();
+    }
 }

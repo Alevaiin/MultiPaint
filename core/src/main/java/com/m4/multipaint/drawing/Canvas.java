@@ -5,16 +5,16 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.List;
+
 public class Canvas {
     private Pixmap pixmap;
     private Texture texture;
-    private final int width;
-    private final int height;
     private boolean dirty = true;
 
+    List<DrawAction> drawHistory;
+
     public Canvas(int width, int height) {
-        this.width = width;
-        this.height = height;
 
         pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
         pixmap.setColor(Color.WHITE);
@@ -75,4 +75,10 @@ public class Canvas {
         pixmap.dispose();
         texture.dispose();
     }
+
+    public void applyAction(DrawAction action) {
+        action.apply(this);
+        drawHistory.add(action);
+    }
+
 }

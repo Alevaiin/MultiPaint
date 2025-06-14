@@ -4,34 +4,32 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 
 public class Brush {
+    private int size;
     private Color color;
-    private int radius;
 
-    public Brush(Color color, int radius) {
+    public Brush(int size, Color color) {
+        this.size = size;
         this.color = color;
-        this.radius = radius;
     }
 
     public void apply(Pixmap pixmap, int x, int y) {
         pixmap.setColor(color);
-        pixmap.fillCircle(x, y, radius);
+        pixmap.fillCircle(x, y, size);
+    }
+
+    public int getSize() {
+        return size;
     }
 
     public Color getColor() {
         return color;
     }
 
-    public void setColor(Color color) {
+    public void setColor(Color color){
         this.color = color;
     }
 
-    public int getRadius() {
-        return radius;
-    }
-
-    public void setRadius(int radius) {
-        if(radius < 1)
-            return;
-        this.radius = radius;
+    public void setSize(int size){
+        this.size = size;
     }
 }
