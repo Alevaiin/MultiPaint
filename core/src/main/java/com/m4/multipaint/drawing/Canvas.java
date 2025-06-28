@@ -12,7 +12,6 @@ public class Canvas {
     private Texture texture;
     private boolean dirty = true;
 
-    List<DrawAction> drawHistory;
 
     public Canvas(int width, int height) {
 
@@ -23,7 +22,7 @@ public class Canvas {
         texture = new Texture(pixmap);
     }
 
-    public void drawBrush(Brush brush, int x, int y) {
+    public void drawPoint(Brush brush, int x, int y) {
         brush.apply(pixmap, x, y);
         dirty = true;
     }
@@ -55,12 +54,6 @@ public class Canvas {
         dirty = true;
     }
 
-
-    private void refreshTexture() {
-        if (texture != null) texture.dispose();
-        texture = new Texture(pixmap);
-    }
-
     public void render(SpriteBatch batch) {
         if (dirty) {
             if (texture != null) texture.dispose();
@@ -74,11 +67,6 @@ public class Canvas {
     public void dispose() {
         pixmap.dispose();
         texture.dispose();
-    }
-
-    public void applyAction(DrawAction action) {
-        action.apply(this);
-        drawHistory.add(action);
     }
 
 }
