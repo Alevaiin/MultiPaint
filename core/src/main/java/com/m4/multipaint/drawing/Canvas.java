@@ -81,4 +81,8 @@ public class Canvas {
         drawHistory.add(action);
     }
 
+    public Pixmap getPixmap() {
+        return pixmap;
+    }
+
 }

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DrawSession {
-    private final Canvas canvas;
+    private Canvas canvas;
     private final Map<String, User> users;
 
     public DrawSession(Canvas canvas) {
@@ -26,5 +26,9 @@ public class DrawSession {
 
     public User getUser(String id) {
         return users.get(id);
+    }
+
+    public void setCanvas(Canvas newCanvas) {
+        this.canvas = newCanvas;
     }
 }

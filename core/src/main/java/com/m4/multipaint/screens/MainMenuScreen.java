@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.m4.multipaint.MultiPaint;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 
 public class MainMenuScreen implements Screen
@@ -29,10 +30,20 @@ public class MainMenuScreen implements Screen
         game.viewport.apply();
         game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
 
+        game.font.getData().setScale(2f);
+
+        GlyphLayout layout1 = new GlyphLayout(game.font, "Welcome to Drop!!!");
+        GlyphLayout layout2 = new GlyphLayout(game.font, "Tap anywhere to begin!");
+
+        float x1 = (game.viewport.getWorldWidth() - layout1.width) / 2;
+        float x2 = (game.viewport.getWorldWidth() - layout2.width) / 2;
+
+        float baseY = (game.viewport.getWorldHeight() / 2) + layout1.height;
+        float spacing = layout1.height * 2;
+
         game.batch.begin();
-        //draw text. Remember that x and y are in meters
-        game.font.draw(game.batch, "Welcome to Drop!!! ", 1, 1.5f);
-        game.font.draw(game.batch, "Tap anywhere to begin!", 1, 1);
+        game.font.draw(game.batch, "Welcome to Drop!!!", x1, baseY);
+        game.font.draw(game.batch, "Tap anywhere to begin!", x2, baseY - spacing);
         game.batch.end();
 
         if (Gdx.input.isTouched()) {
