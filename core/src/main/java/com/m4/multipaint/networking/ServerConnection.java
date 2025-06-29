@@ -57,6 +57,7 @@ public class ServerConnection extends Thread
     {
         this.isConnected = false;
         this.interrupt();
+        this.socket.dispose();
     }
 
     @Override

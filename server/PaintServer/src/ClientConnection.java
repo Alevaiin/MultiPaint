@@ -54,8 +54,9 @@ public class ClientConnection extends Thread
     public void processMessage(String message)
     {
         System.out.println(clientId + ": " + message);
-        if(message != null)
-            connectionsManager.broadcast(message, clientId);
+        if(message == null)
+            this.closeConnection();
+        connectionsManager.broadcast(message, clientId);
     }
 
     private String readNextMessage() throws ClientDisconnectedException, SocketTimeoutException

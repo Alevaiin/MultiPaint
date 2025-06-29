@@ -156,6 +156,5 @@ public class PaintScreen implements Screen {
         {
             throw new RuntimeException(e);
         }
-        Gdx.app.log("APP","CERRANDO VENTANA");
     }
 }
