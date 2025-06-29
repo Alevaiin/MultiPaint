@@ -18,4 +18,10 @@ public class DrawAction {
     public void apply(Canvas canvas) {
         canvas.drawLine(user.getBrush(), startX, startY, endX, endY);
     }
+
+    @Override
+    public String toString()
+    {
+        return String.format("%s|%d|%s|%s|%s|%s",this.user.getBrush().getColor().toString(),this.user.getBrush().getSize(),startX,startY,endX,endY);
+    }
 }

@@ -13,7 +13,6 @@ public class Brush {
     }
 
     public void apply(Pixmap pixmap, int x, int y) {
-        pixmap.setColor(color);
         pixmap.fillCircle(x, y, size);
     }
 
