@@ -69,4 +69,8 @@ public class Canvas {
         texture.dispose();
     }
 
+    public Pixmap getPixmap() {
+        return pixmap;
+    }
+
 }
