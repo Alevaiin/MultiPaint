@@ -22,24 +22,20 @@ public class PaintScreen implements Screen {
     private final DrawSession session;
     private final User localUser;
     private Vector2 lastDrawPosition;
-    private Stage stage;
-    private Skin skin;
+    private final Stage stage;
+    private final Skin skin;
     private boolean isFullScreen = false;
-    private TextButton fullScreenButton;
-    private ServerConnection serverConnection;
+    private final TextButton fullScreenButton;
+    private final ServerConnection serverConnection;
 
-    private final String serverIp;
-    private final int serverPort;
-    private final String userName;
 
-    public PaintScreen(MultiPaint game, String serverIp, int serverPort, String userName) {
+    public PaintScreen(MultiPaint game, String userName, ServerConnection serverConnection) {
         this.game = game;
-        this.serverIp = serverIp;
-        this.serverPort = serverPort;
-        this.userName = userName;
 
         this.stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
+        this.serverConnection = serverConnection;
+        serverConnection.start(); //Lanzo hilo para escuchar desde el server
 
         this.skin = new Skin(Gdx.files.internal("uiskin.json"));
 
@@ -73,11 +69,6 @@ public class PaintScreen implements Screen {
 
         this.localUser = new User(userName, Color.BLACK, 5);
         this.session.addUser(localUser);
-
-        serverConnection = new ServerConnection(this.localUser.getId(),serverIp,serverPort);
-
-        Thread thread = new Thread(() -> serverConnection.connect());
-        thread.start();
     }
 
     @Override
@@ -156,5 +147,6 @@ public class PaintScreen implements Screen {
         session.getCanvas().dispose();
         stage.dispose();
         skin.dispose();
+        serverConnection.interrupt();
     }
 }

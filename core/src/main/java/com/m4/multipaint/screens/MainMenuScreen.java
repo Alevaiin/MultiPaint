@@ -66,11 +66,11 @@ public class MainMenuScreen implements Screen
                     try {
                         startButton.setDisabled(true);
                         startButton.setText("Connecting");
-                        ServerConnection testConnection = new ServerConnection("test", ip, port);
+                        ServerConnection testConnection = new ServerConnection(userName, ip, port);
                         testConnection.connect();
                         if (testConnection.isConnected()) {
                             Gdx.app.postRunnable(() -> {
-                                game.setScreen(new PaintScreen(game, ip, port, userName));
+                                game.setScreen(new PaintScreen(game, userName, testConnection));
                                 dispose();
                             });
                         } else {

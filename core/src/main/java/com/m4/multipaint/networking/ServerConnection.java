@@ -6,10 +6,12 @@ import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.net.SocketHints;
 import com.m4.multipaint.drawing.DrawAction;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
-public class ServerConnection
+public class ServerConnection extends Thread
 {
     String clientId;
     Socket socket;
@@ -45,6 +47,22 @@ public class ServerConnection
 
     public boolean isConnected() {
         return socket != null && socket.isConnected();
+    }
+
+    @Override
+    public void run(){
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        try
+        {
+            while (socket.isConnected()){
+                String message = in.readLine();
+                Gdx.app.log("NETWORK", "Receiving: "+message);
+            }
+        } catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+
     }
 
 
