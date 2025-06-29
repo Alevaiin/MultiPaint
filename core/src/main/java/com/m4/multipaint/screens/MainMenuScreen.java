@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.m4.multipaint.networking.ServerConnection;
 
 
 public class MainMenuScreen implements Screen
@@ -48,8 +49,39 @@ public class MainMenuScreen implements Screen
                 String ip = ipField.getText();
                 int port = Integer.parseInt(portField.getText());
                 String userName = userNameField.getText();
-                game.setScreen(new PaintScreen(game, ip, port, userName));
-                dispose();
+
+                new Thread(() -> {
+                    try {
+                        startButton.setDisabled(true);
+                        startButton.setText("Connecting");
+                        ServerConnection testConnection = new ServerConnection("test", ip, port);
+                        testConnection.connect();
+                        if (testConnection.isConnected()) {
+                            Gdx.app.postRunnable(() -> {
+                                game.setScreen(new PaintScreen(game, ip, port, userName));
+                                dispose();
+                            });
+                        } else {
+                            Gdx.app.postRunnable(() -> {
+                                Dialog dialog = new Dialog("Error", skin);
+                                dialog.text("No se pudo conectar al servidor, revise los datos de conexion.");
+                                dialog.button("OK");
+                                dialog.show(stage);
+                                startButton.setDisabled(false);
+                                startButton.setText("Start Drawing");
+                            });
+                        }
+                    } catch (Exception e) {
+                        Gdx.app.postRunnable(() -> {
+                            Dialog dialog = new Dialog("Error", skin);
+                            dialog.text("No se pudo conectar al servidor, revise los datos de conexion.");
+                            dialog.button("OK");
+                            dialog.show(stage);
+                            startButton.setDisabled(false);
+                            startButton.setText("Start Drawing");
+                        });
+                    }
+                }).start();
             }
         });
 

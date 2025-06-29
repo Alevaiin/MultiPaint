@@ -3,6 +3,7 @@ package com.m4.multipaint.networking;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.net.Socket;
+import com.badlogic.gdx.net.SocketHints;
 import com.m4.multipaint.drawing.DrawAction;
 
 import java.io.IOException;
@@ -14,20 +15,36 @@ public class ServerConnection
     Socket socket;
 
     public ServerConnection(String clientId, String ip, int port){
-        socket = Gdx.net.newClientSocket(Net.Protocol.TCP,ip, port, null);
+        SocketHints hints = new SocketHints();
+        hints.connectTimeout=2500;
+        socket = Gdx.net.newClientSocket(Net.Protocol.TCP,ip, port, hints);
         this.clientId = clientId;
     }
 
-    public void connect()
-    {
-        while (!socket.isConnected()) //Esperamos a que se conecte
-        {
-            Gdx.app.log("NETWORK", "Intentando conectar");
+    public void connect() {
+        try {
+            int attempts = 0;
+            int maxAttempts = 5;
 
+            while (!socket.isConnected() && attempts < maxAttempts) {
+                Gdx.app.log("NETWORK", "Intentando conectar... intento #" + (attempts + 1));
+                Thread.sleep(500); // Esperar medio segundo antes de intentar de nuevo
+                attempts++;
+            }
+
+            if (socket.isConnected()) {
+                Gdx.app.log("NETWORK", "Conectado");
+                sendToServer(clientId);
+            } else {
+                Gdx.app.log("NETWORK", "No se pudo conectar al servidor");
+            }
+        } catch (Exception e) {
+            Gdx.app.error("NETWORK", "Error al intentar conectar: " + e.getMessage(), e);
         }
-        Gdx.app.log("NETWORK", "Conectado");
-        sendToServer(clientId);
+    }
 
+    public boolean isConnected() {
+        return socket != null && socket.isConnected();
     }
 
 
