@@ -1,7 +1,5 @@
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PaintServer
 {
@@ -10,17 +8,15 @@ public class PaintServer
     public void start(int port) throws IOException
     {
         System.out.println("Esperando conexiones...");
-        List<ClientConnection> clients = new ArrayList<>();
+        ConnectionsManager connectionsManager = ConnectionsManager.getConnectionManager();
         serverSocket = new ServerSocket(port);
         while(true){
             ClientConnection client = new ClientConnection(serverSocket.accept());
             System.out.println("Conexion recibida");
-            clients.add(client);
+            connectionsManager.addClient(client);
             client.start();
         }
-
     }
-
 
     public static void main(String[] args) throws IOException
     {
