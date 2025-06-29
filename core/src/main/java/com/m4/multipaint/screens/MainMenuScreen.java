@@ -47,8 +47,20 @@ public class MainMenuScreen implements Screen
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 String ip = ipField.getText();
-                int port = Integer.parseInt(portField.getText());
+                String portText = portField.getText();
                 String userName = userNameField.getText();
+
+                if (!isValidIp(ip)) {
+                    showErrorDialog("La direccion IP no es válida.");
+                    return;
+                }
+
+                if (!isValidPort(portText)) {
+                    showErrorDialog("El puerto debe ser un numero entre 1 y 65535.");
+                    return;
+                }
+
+                int port = Integer.parseInt(portText);
 
                 new Thread(() -> {
                     try {
@@ -63,20 +75,14 @@ public class MainMenuScreen implements Screen
                             });
                         } else {
                             Gdx.app.postRunnable(() -> {
-                                Dialog dialog = new Dialog("Error", skin);
-                                dialog.text("No se pudo conectar al servidor, revise los datos de conexion.");
-                                dialog.button("OK");
-                                dialog.show(stage);
+                                showErrorDialog("No se pudo conectar al servidor, revise los datos de conexion.");
                                 startButton.setDisabled(false);
                                 startButton.setText("Start Drawing");
                             });
                         }
                     } catch (Exception e) {
                         Gdx.app.postRunnable(() -> {
-                            Dialog dialog = new Dialog("Error", skin);
-                            dialog.text("No se pudo conectar al servidor, revise los datos de conexion.");
-                            dialog.button("OK");
-                            dialog.show(stage);
+                            showErrorDialog("No se pudo conectar al servidor, revise los datos de conexion.");
                             startButton.setDisabled(false);
                             startButton.setText("Start Drawing");
                         });
@@ -114,7 +120,7 @@ public class MainMenuScreen implements Screen
 
         game.font.getData().setScale(1.5f);
 
-        GlyphLayout layout1 = new GlyphLayout(game.font, "Welcome to Drop!!!");
+        GlyphLayout layout1 = new GlyphLayout(game.font, "Welcome to MultiPaint!!!");
         GlyphLayout layout2 = new GlyphLayout(game.font, "Enter your details below to start");
 
         float x1 = (game.viewport.getWorldWidth() - layout1.width) / 2;
@@ -124,7 +130,7 @@ public class MainMenuScreen implements Screen
         float spacing = layout1.height * 2;
 
         game.batch.begin();
-        game.font.draw(game.batch, "Welcome to Drop!!!", x1, baseY);
+        game.font.draw(game.batch, "Welcome to MultiPaint!!!", x1, baseY);
         game.font.draw(game.batch, "Enter your details below to start", x2, baseY - spacing);
         game.batch.end();
 
@@ -162,5 +168,25 @@ public class MainMenuScreen implements Screen
     public void dispose() {
         stage.dispose();
         skin.dispose();
+    }
+
+    private boolean isValidIp(String ip) {
+        //https://stackoverflow.com/questions/5284147/validating-ipv4-addresses-with-regexp
+        return ip.matches("^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}$");
+    }
+
+    private boolean isValidPort(String portText) {
+        try {
+            int port = Integer.parseInt(portText);
+            return port >= 1 && port <= 65535;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    private void showErrorDialog(String message) {
+        Dialog dialog = new Dialog("Error", skin);
+        dialog.text(message);
+        dialog.button("OK");
+        dialog.show(stage);
     }
 }
