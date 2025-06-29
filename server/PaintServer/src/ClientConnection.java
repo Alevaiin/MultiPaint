@@ -3,6 +3,7 @@ import exceptions.ClientRejectedException;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Objects;
 
 public class ClientConnection extends Thread
@@ -12,6 +13,7 @@ public class ClientConnection extends Thread
     private PrintWriter out;
     private BufferedReader in;
 
+    private int inactiveCount = 0;
     private final ConnectionsManager connectionsManager = ConnectionsManager.getConnectionManager();
 
     public ClientConnection(Socket socket)
@@ -19,9 +21,13 @@ public class ClientConnection extends Thread
         this.socket = socket;
         try
         {
+            this.socket.setSoTimeout(Constants.INACTIVE_TIMEOUT_MILIS);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             clientId = readNextMessage();
+            if(clientId == null){
+                throw new ClientRejectedException("No se recibio el ID de parte del cliente");
+            }
         } catch (IOException e)
         {
             System.out.println("Error al recibir conexion");
@@ -33,7 +39,7 @@ public class ClientConnection extends Thread
         System.out.println(clientId + " se ha conectado");
         try
         {
-            while (socket.isConnected())
+            while (socket.isConnected() && !this.isInactive())
             {
                 String message = readNextMessage();
                 processMessage(message);
@@ -48,6 +54,8 @@ public class ClientConnection extends Thread
 
     public void processMessage(String message)
     {
+        if(message == null)
+            return;
         System.out.println(clientId + ": " + message);
         connectionsManager.broadcast(message, clientId);
     }
@@ -58,11 +66,17 @@ public class ClientConnection extends Thread
         try
         {
             inputLine = in.readLine();
-        } catch (IOException e)
+        }catch (SocketTimeoutException e){
+            System.out.println(clientId + " inactivo");
+            this.inactiveCount++;
+            return null;
+        }
+        catch (IOException e)
         {
             System.out.println("Error al leer del socket");
             throw new ClientDisconnectedException(e.getMessage());
         }
+        this.inactiveCount = 0;
         return inputLine;
     }
 
@@ -102,5 +116,9 @@ public class ClientConnection extends Thread
     public int hashCode()
     {
         return Objects.hashCode(clientId);
+    }
+
+    public boolean isInactive(){
+        return this.inactiveCount > Constants.MAX_INACTIVE_COUNT;
     }
 }
