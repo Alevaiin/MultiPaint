@@ -20,13 +20,28 @@ public class ConnectionsManager
         return connectionManager;
     }
 
-    public void addClient(ClientConnection clientConnection) throws ClientRejectedException
+    public void addClient(Socket clientSocket)
     {
-        if(clients.contains(clientConnection)){
+        Thread acceptThread = new Thread( () -> {
+            ClientConnection client = new ClientConnection(clientSocket);
+            try{
+                acceptConnection(client);
+            }catch (ClientRejectedException e){
+                System.out.println("Error al aceptar nuevo cliente");
+            }
+        });
+        acceptThread.start();
+    }
+
+    private void acceptConnection(ClientConnection clientConnection) throws ClientRejectedException
+    {
+        if (clients.contains(clientConnection))
+        {
             clientConnection.closeConnection();
-            throw new ClientRejectedException("El cliente "+clientConnection.getClientId() + " ya esta conectado");
+            throw new ClientRejectedException("El cliente " + clientConnection.getClientId() + " ya esta conectado");
         }
         this.clients.add(clientConnection);
+        clientConnection.start();
     }
 
     public void broadcast(String message, String from){

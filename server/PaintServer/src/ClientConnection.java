@@ -1,3 +1,4 @@
+import exceptions.ClientDisconnectedException;
 import exceptions.ClientRejectedException;
 
 import java.io.*;
@@ -20,6 +21,7 @@ public class ClientConnection extends Thread
         {
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            clientId = readNextMessage();
         } catch (IOException e)
         {
             System.out.println("Error al recibir conexion");
@@ -28,23 +30,20 @@ public class ClientConnection extends Thread
 
     public void run()
     {
-        clientId = readNextMessage();
+        System.out.println(clientId + " se ha conectado");
         try
         {
-            this.connectionsManager.addClient(this);
-            System.out.println(clientId + " se ha conectado");
             while (socket.isConnected())
             {
                 String message = readNextMessage();
                 processMessage(message);
             }
-            this.connectionsManager.removeClient(this);
-            closeConnection();
-            System.out.println(clientId + " se ha desconectado");
-        } catch (ClientRejectedException e)
-        {
-            System.out.println(e.getMessage());
+        }catch (ClientDisconnectedException e){
+            System.out.println("Se ha perdido la conexion con el cliente "+clientId);
         }
+        System.out.println(clientId + " se ha desconectado");
+        closeConnection();
+        this.connectionsManager.removeClient(this);
     }
 
     public void processMessage(String message)
@@ -53,7 +52,7 @@ public class ClientConnection extends Thread
         connectionsManager.broadcast(message, clientId);
     }
 
-    private String readNextMessage()
+    private String readNextMessage() throws ClientDisconnectedException
     {
         String inputLine;
         try
@@ -62,7 +61,7 @@ public class ClientConnection extends Thread
         } catch (IOException e)
         {
             System.out.println("Error al leer del socket");
-            throw new RuntimeException(e);
+            throw new ClientDisconnectedException(e.getMessage());
         }
         return inputLine;
     }

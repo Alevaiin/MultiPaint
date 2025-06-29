@@ -11,8 +11,8 @@ public class PaintServer
         System.out.println("Esperando conexiones...");
         serverSocket = new ServerSocket(port);
         while(true){
-            ClientConnection client = new ClientConnection(serverSocket.accept());
-            client.start();
+            Socket socket = serverSocket.accept();
+            connectionsManager.addClient(socket);
         }
     }
 
