@@ -17,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import java.io.IOException;
+
 public class PaintScreen implements Screen {
     private final MultiPaint game;
     private final DrawSession session;
@@ -147,6 +149,13 @@ public class PaintScreen implements Screen {
         session.getCanvas().dispose();
         stage.dispose();
         skin.dispose();
-        serverConnection.interrupt();
+        try
+        {
+            serverConnection.disconnect();
+        } catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+        Gdx.app.log("APP","CERRANDO VENTANA");
     }
 }

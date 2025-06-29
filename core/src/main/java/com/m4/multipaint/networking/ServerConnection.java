@@ -15,6 +15,8 @@ public class ServerConnection extends Thread
 {
     String clientId;
     Socket socket;
+    boolean isConnected = false;
+    BufferedReader in;
 
     public ServerConnection(String clientId, String ip, int port){
         SocketHints hints = new SocketHints();
@@ -36,6 +38,8 @@ public class ServerConnection extends Thread
 
             if (socket.isConnected()) {
                 Gdx.app.log("NETWORK", "Conectado");
+                this.isConnected = true;
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 sendToServer(clientId);
             } else {
                 Gdx.app.log("NETWORK", "No se pudo conectar al servidor");
@@ -46,23 +50,33 @@ public class ServerConnection extends Thread
     }
 
     public boolean isConnected() {
-        return socket != null && socket.isConnected();
+        return socket != null && socket.isConnected() && this.isConnected;
+    }
+
+    public void disconnect() throws IOException
+    {
+        this.isConnected = false;
+        this.interrupt();
     }
 
     @Override
     public void run(){
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
         try
         {
-            while (socket.isConnected()){
-                String message = in.readLine();
-                Gdx.app.log("NETWORK", "Receiving: "+message);
+            while (this.isConnected()){
+                in.lines().forEach(this::processMessage);
             }
+            this.disconnect();
         } catch (IOException e)
         {
             throw new RuntimeException(e);
         }
 
+    }
+
+    private void processMessage(String message){
+        Gdx.app.log("NETWORK", "Receiving: "+message);
     }
 
 

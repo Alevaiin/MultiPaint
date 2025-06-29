@@ -30,6 +30,7 @@ public class MultiPaint extends Game
     public void dispose() {
         batch.dispose();
         font.dispose();
+        this.screen.dispose();
     }
 
     @Override
