@@ -13,7 +13,6 @@ public class ClientConnection extends Thread
     private PrintWriter out;
     private BufferedReader in;
 
-    private int inactiveCount = 0;
     private final ConnectionsManager connectionsManager = ConnectionsManager.getConnectionManager();
 
     public ClientConnection(Socket socket)
@@ -39,12 +38,12 @@ public class ClientConnection extends Thread
         System.out.println(clientId + " se ha conectado");
         try
         {
-            while (socket.isConnected() && !this.isInactive())
+            while (socket.isConnected())
             {
                 String message = readNextMessage();
                 processMessage(message);
             }
-        }catch (ClientDisconnectedException e){
+        }catch (ClientDisconnectedException | SocketTimeoutException e){
             System.out.println("Se ha perdido la conexion con el cliente "+clientId);
         }
         System.out.println(clientId + " se ha desconectado");
@@ -54,13 +53,11 @@ public class ClientConnection extends Thread
 
     public void processMessage(String message)
     {
-        if(message == null)
-            return;
         System.out.println(clientId + ": " + message);
         connectionsManager.broadcast(message, clientId);
     }
 
-    private String readNextMessage() throws ClientDisconnectedException
+    private String readNextMessage() throws ClientDisconnectedException, SocketTimeoutException
     {
         String inputLine;
         try
@@ -68,15 +65,13 @@ public class ClientConnection extends Thread
             inputLine = in.readLine();
         }catch (SocketTimeoutException e){
             System.out.println(clientId + " inactivo");
-            this.inactiveCount++;
-            return null;
+            throw e;
         }
         catch (IOException e)
         {
             System.out.println("Error al leer del socket");
             throw new ClientDisconnectedException(e.getMessage());
         }
-        this.inactiveCount = 0;
         return inputLine;
     }
 
@@ -116,9 +111,5 @@ public class ClientConnection extends Thread
     public int hashCode()
     {
         return Objects.hashCode(clientId);
-    }
-
-    public boolean isInactive(){
-        return this.inactiveCount > Constants.MAX_INACTIVE_COUNT;
     }
 }
