@@ -55,7 +55,10 @@ public class ClientConnection extends Thread
     {
         System.out.println(clientId + ": " + message);
         if(message == null)
+        {
             this.closeConnection();
+            return;
+        }
         connectionsManager.broadcast(message, clientId);
     }
 
