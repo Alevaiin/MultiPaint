@@ -1,5 +1,8 @@
+import exceptions.ClientRejectedException;
+
 import java.io.*;
 import java.net.Socket;
+import java.util.Objects;
 
 public class ClientConnection extends Thread
 {
@@ -9,7 +12,6 @@ public class ClientConnection extends Thread
     private BufferedReader in;
 
     private final ConnectionsManager connectionsManager = ConnectionsManager.getConnectionManager();
-    ;
 
     public ClientConnection(Socket socket)
     {
@@ -27,21 +29,28 @@ public class ClientConnection extends Thread
     public void run()
     {
         clientId = readNextMessage();
-        System.out.println(clientId + " se ha conectado");
-        while (socket.isConnected())
+        try
         {
-            String message = readNextMessage();
-            processMessage(message);
+            this.connectionsManager.addClient(this);
+            System.out.println(clientId + " se ha conectado");
+            while (socket.isConnected())
+            {
+                String message = readNextMessage();
+                processMessage(message);
+            }
+            this.connectionsManager.removeClient(this);
+            closeConnection();
+            System.out.println(clientId + " se ha desconectado");
+        } catch (ClientRejectedException e)
+        {
+            System.out.println(e.getMessage());
         }
-        closeConnection();
-        System.out.println(clientId + " se ha desconectado");
     }
 
     public void processMessage(String message)
     {
         System.out.println(clientId + ": " + message);
         connectionsManager.broadcast(message, clientId);
-
     }
 
     private String readNextMessage()
@@ -79,5 +88,20 @@ public class ClientConnection extends Thread
         {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ClientConnection that = (ClientConnection) o;
+        return Objects.equals(clientId, that.clientId);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hashCode(clientId);
     }
 }
