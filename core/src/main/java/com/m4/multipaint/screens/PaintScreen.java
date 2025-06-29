@@ -28,12 +28,15 @@ public class PaintScreen implements Screen {
     private TextButton fullScreenButton;
     private ServerConnection serverConnection;
 
-    private final String serverIp = "192.168.0.19"; //HARDCODEADO
-    private final int serverPort = 6666; //HARDCODEADO
-    private final String userName = "Alexis"; //HARDCODEADO
+    private final String serverIp;
+    private final int serverPort;
+    private final String userName;
 
-    public PaintScreen(MultiPaint game) {
+    public PaintScreen(MultiPaint game, String serverIp, int serverPort, String userName) {
         this.game = game;
+        this.serverIp = serverIp;
+        this.serverPort = serverPort;
+        this.userName = userName;
 
         this.stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
@@ -132,7 +135,7 @@ public class PaintScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         game.viewport.update(width, height, false);
-        stage.getViewport().update(width, height, false);
+        stage.getViewport().update(width, height, true);
 
         Canvas oldCanvas = session.getCanvas();
         Canvas newCanvas = new Canvas(width, height);
