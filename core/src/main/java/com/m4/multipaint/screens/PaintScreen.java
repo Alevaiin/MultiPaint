@@ -278,7 +278,7 @@ public class PaintScreen implements Screen {
     private void renderShapePreview() {
         if (shapeStartPosition != null && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             Vector2 currentPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-            game.viewport.project(currentPos);
+            game.viewport.unproject(currentPos);
 
             // Usar ShapeRenderer para dibujar la previsualización
             game.shapeRenderer.setProjectionMatrix(game.viewport.getCamera().combined);
@@ -339,6 +339,7 @@ public class PaintScreen implements Screen {
 
             if (currentTool != DrawingTool.BRUSH) {
                 shapeStartPosition = new Vector2(current);
+                game.viewport.unproject(shapeStartPosition);
             }
         }
 
@@ -376,6 +377,8 @@ public class PaintScreen implements Screen {
     }
 
     private void createShapeAction(Vector2 start, Vector2 end) {
+        game.viewport.unproject(start);
+        game.viewport.project(end);
         switch (currentTool) {
             case LINE:
                 DrawAction lineAction = new DrawAction(localUser, (int) start.x, (int) start.y, (int) end.x, (int) end.y);
