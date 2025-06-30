@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import java.util.List;
-
 public class Canvas {
     private Pixmap pixmap;
     private Texture texture;
@@ -27,7 +25,7 @@ public class Canvas {
         dirty = true;
     }
 
-    public void drawLine(Brush brush, int startX, int startY, int endX, int endY) {
+    public void drawLine(Color color, int size, int startX, int startY, int endX, int endY) {
         int deltaX = Math.abs(endX - startX);
         int deltaY = Math.abs(endY - startY);
         int stepX = startX < endX ? 1 : -1;
@@ -35,7 +33,8 @@ public class Canvas {
         int error = deltaX - deltaY;
 
         while (true) {
-            brush.apply(pixmap, startX, startY);
+            pixmap.setColor(color); //TODO: el color no deberia cambiar aca, esto es para probar mensajes recibidos
+            pixmap.fillCircle(startX, startY, size);
             if (startX == endX && startY == endY) break;
 
             int doubleError = 2 * error;

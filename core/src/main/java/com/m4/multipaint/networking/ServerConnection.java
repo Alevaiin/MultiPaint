@@ -5,6 +5,7 @@ import com.badlogic.gdx.Net;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.net.SocketHints;
 import com.m4.multipaint.drawing.DrawAction;
+import com.m4.multipaint.drawing.DrawSession;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,6 +18,7 @@ public class ServerConnection extends Thread
     Socket socket;
     boolean isConnected = false;
     BufferedReader in;
+    DrawSession drawSession;
 
     public ServerConnection(String clientId, String ip, int port){
         SocketHints hints = new SocketHints();
@@ -72,6 +74,10 @@ public class ServerConnection extends Thread
 
     private void processMessage(String message){
         Gdx.app.log("NETWORK", "Receiving: "+message);
+        if(drawSession != null){
+            DrawAction incomingAction = MessageParser.parseDrawAction(message);
+            Gdx.app.postRunnable( () -> drawSession.applyAction(incomingAction));
+        }
     }
 
 
@@ -88,5 +94,9 @@ public class ServerConnection extends Thread
         }catch (IOException e){
             Gdx.app.log("ERROR", "Error al comunicarse con el server");
         }
+    }
+
+    public void setDrawSession(DrawSession drawSession){
+        this.drawSession = drawSession;
     }
 }

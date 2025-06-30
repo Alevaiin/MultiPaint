@@ -18,7 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-import java.io.IOException;
 
 public class PaintScreen implements Screen {
     private final MultiPaint game;
@@ -28,8 +27,6 @@ public class PaintScreen implements Screen {
     private final Stage stage;
     private final Skin skin;
     private boolean isFullScreen = false;
-//    private final TextButton fullScreenButton;
-//    private final ServerConnection serverConnection;
     private TextButton fullScreenButton;
     private TextButton increaseBrushButton;
     private TextButton decreaseBrushButton;
@@ -61,14 +58,13 @@ public class PaintScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         this.serverConnection = serverConnection;
 
-
         this.skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         int canvasWidth = Gdx.graphics.getDisplayMode().width;
         int canvasHeight = Gdx.graphics.getDisplayMode().height;
 
         Canvas canvas = new Canvas(canvasWidth, canvasHeight);
-        this.session = new DrawSession(canvas);
+        this.session = new DrawSession(canvas, serverConnection);
 
         this.localUser = new User(userName, Color.BLACK, 5);
         this.session.addUser(localUser);
@@ -350,9 +346,9 @@ public class PaintScreen implements Screen {
             if (currentTool == DrawingTool.BRUSH) {
                 DrawAction action;
                 if (lastDrawPosition != null) {
-                    action = new DrawAction(localUser, (int) lastDrawPosition.x, (int) lastDrawPosition.y, (int) current.x, (int) current.y);
+                    action = new DrawAction(localUser.getColor(),localUser.getBrushSize(), (int) lastDrawPosition.x, (int) lastDrawPosition.y, (int) current.x, (int) current.y);
                 } else {
-                    action = new DrawAction(localUser, (int) current.x, (int) current.y, (int) current.x, (int) current.y);
+                    action = new DrawAction(localUser.getColor(), localUser.getBrushSize(), (int) current.x, (int) current.y, (int) current.x, (int) current.y);
                 }
                 session.applyAction(action);
                 serverConnection.sendActionToServer(action);
