@@ -9,6 +9,7 @@ import com.m4.multipaint.drawing.DrawAction;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 
 public class ServerConnection extends Thread
@@ -88,5 +89,9 @@ public class ServerConnection extends Thread
         }catch (IOException e){
             Gdx.app.log("ERROR", "Error al comunicarse con el server");
         }
+    }
+
+    public String readNextMessage() throws Exception{
+        return in.readLine();
     }
 }
