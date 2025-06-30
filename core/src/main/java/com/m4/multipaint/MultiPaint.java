@@ -3,6 +3,7 @@ package com.m4.multipaint;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.*;
 import com.m4.multipaint.screens.MainMenuScreen;
 
@@ -12,11 +13,12 @@ public class MultiPaint extends Game
     public SpriteBatch batch;
     public BitmapFont font;
     public Viewport viewport;
+    public ShapeRenderer shapeRenderer;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
-
+        shapeRenderer = new ShapeRenderer();
         font = new BitmapFont();
         viewport = new ScreenViewport();
 
@@ -30,6 +32,7 @@ public class MultiPaint extends Game
     public void dispose() {
         batch.dispose();
         font.dispose();
+        shapeRenderer.dispose();
         this.screen.dispose();
     }
 
