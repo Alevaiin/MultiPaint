@@ -33,6 +33,7 @@ public class MultiPaint extends Game
         batch.dispose();
         font.dispose();
         shapeRenderer.dispose();
+        this.screen.dispose();
     }
 
     @Override

@@ -18,14 +18,18 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import java.io.IOException;
+
 public class PaintScreen implements Screen {
     private final MultiPaint game;
     private final DrawSession session;
     private final User localUser;
     private Vector2 lastDrawPosition;
-    private Stage stage;
-    private Skin skin;
+    private final Stage stage;
+    private final Skin skin;
     private boolean isFullScreen = false;
+    private final TextButton fullScreenButton;
+    private final ServerConnection serverConnection;
     private TextButton fullScreenButton;
     private TextButton increaseBrushButton;
     private TextButton decreaseBrushButton;
@@ -49,21 +53,16 @@ public class PaintScreen implements Screen {
     private DrawingTool currentTool = DrawingTool.BRUSH;
     private Vector2 shapeStartPosition;
 
-    private final String serverIp;
-    private final int serverPort;
-    private final String userName;
 
-    public PaintScreen(MultiPaint game, String serverIp, int serverPort, String userName) {
+    public PaintScreen(MultiPaint game, String userName, ServerConnection serverConnection) {
         this.game = game;
-        this.serverIp = serverIp;
-        this.serverPort = serverPort;
-        this.userName = userName;
 
         this.stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
+        this.serverConnection = serverConnection;
+
 
         this.skin = new Skin(Gdx.files.internal("uiskin.json"));
-
 
         int canvasWidth = Gdx.graphics.getDisplayMode().width;
         int canvasHeight = Gdx.graphics.getDisplayMode().height;
@@ -76,10 +75,7 @@ public class PaintScreen implements Screen {
 
         setupUI();
 
-        serverConnection = new ServerConnection(this.localUser.getId(),serverIp,serverPort);
-
-        Thread thread = new Thread(() -> serverConnection.connect());
-        thread.start();
+        serverConnection.start(); //Lanzo hilo para escuchar desde el server
     }
 
     private void setupUI() {
@@ -91,19 +87,19 @@ public class PaintScreen implements Screen {
         // Botón de pantalla completa
         fullScreenButton = new TextButton("Enter Fullscreen", skin);
         fullScreenButton.addListener(new ChangeListener() {
-             @Override
-             public void changed(ChangeEvent event, Actor actor) {
-                 if (!isFullScreen) {
-                     Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
-                     isFullScreen = true;
-                     fullScreenButton.setText("Exit Fullscreen");
-                 } else {
-                     Gdx.graphics.setWindowedMode(1280, 720);
-                     isFullScreen = false;
-                     fullScreenButton.setText("Enter Fullscreen");
-                 }
-             }
-         });
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (!isFullScreen) {
+                    Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+                    isFullScreen = true;
+                    fullScreenButton.setText("Exit Fullscreen");
+                } else {
+                    Gdx.graphics.setWindowedMode(1280, 720);
+                    isFullScreen = false;
+                    fullScreenButton.setText("Enter Fullscreen");
+                }
+            }
+        });
 
         // Botón para aumentar grosor del pincel
         increaseBrushButton = new TextButton("+ Brush", skin);
@@ -288,12 +284,12 @@ public class PaintScreen implements Screen {
             game.shapeRenderer.setProjectionMatrix(game.viewport.getCamera().combined);
             game.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             game.shapeRenderer.setColor(localUser.getColor().r, localUser.getColor().g,
-                                       localUser.getColor().b, 0.5f); // Semi-transparente
+                localUser.getColor().b, 0.5f); // Semi-transparente
 
             switch (currentTool) {
                 case LINE:
                     game.shapeRenderer.line(shapeStartPosition.x, shapeStartPosition.y,
-                                          currentPos.x, currentPos.y);
+                        currentPos.x, currentPos.y);
                     break;
                 case RECTANGLE:
                     float minX = Math.min(shapeStartPosition.x, currentPos.x);
@@ -494,6 +490,7 @@ public class PaintScreen implements Screen {
             0, 0, width, height);
 
         session.setCanvas(newCanvas);
+
         oldCanvas.dispose();
     }
 
@@ -507,5 +504,12 @@ public class PaintScreen implements Screen {
         session.getCanvas().dispose();
         stage.dispose();
         skin.dispose();
+        try
+        {
+            serverConnection.disconnect();
+        } catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }
