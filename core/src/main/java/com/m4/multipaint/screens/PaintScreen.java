@@ -28,8 +28,8 @@ public class PaintScreen implements Screen {
     private final Stage stage;
     private final Skin skin;
     private boolean isFullScreen = false;
-    private final TextButton fullScreenButton;
-    private final ServerConnection serverConnection;
+//    private final TextButton fullScreenButton;
+//    private final ServerConnection serverConnection;
     private TextButton fullScreenButton;
     private TextButton increaseBrushButton;
     private TextButton decreaseBrushButton;
