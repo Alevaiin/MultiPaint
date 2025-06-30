@@ -149,12 +149,6 @@ public class PaintScreen implements Screen {
         session.getCanvas().dispose();
         stage.dispose();
         skin.dispose();
-        try
-        {
-            serverConnection.disconnect();
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
+        serverConnection.disconnect();
     }
 }

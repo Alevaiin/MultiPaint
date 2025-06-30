@@ -53,7 +53,7 @@ public class ServerConnection extends Thread
         return socket != null && socket.isConnected() && this.isConnected;
     }
 
-    public void disconnect() throws IOException
+    public void disconnect()
     {
         this.isConnected = false;
         this.interrupt();
@@ -63,16 +63,10 @@ public class ServerConnection extends Thread
     @Override
     public void run(){
 
-        try
-        {
-            while (this.isConnected()){
-                in.lines().forEach(this::processMessage);
-            }
-            this.disconnect();
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
+        while (this.isConnected()){
+            in.lines().forEach(this::processMessage);
         }
+        this.disconnect();
 
     }
 
