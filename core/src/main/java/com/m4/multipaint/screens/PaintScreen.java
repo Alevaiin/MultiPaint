@@ -17,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.m4.multipaint.ui.UserInterface;
+import com.m4.multipaint.ui.buttons.FullScreenButton;
 
 
 public class PaintScreen implements Screen {
@@ -26,8 +28,6 @@ public class PaintScreen implements Screen {
     private Vector2 lastDrawPosition;
     private final Stage stage;
     private final Skin skin;
-    private boolean isFullScreen = false;
-    private TextButton fullScreenButton;
     private TextButton increaseBrushButton;
     private TextButton decreaseBrushButton;
     private TextButton brushToolButton;
@@ -41,14 +41,9 @@ public class PaintScreen implements Screen {
     private TextButton greenColorButton;
     private ServerConnection serverConnection;
     private boolean wasLeftButtonPressed = false;
-    private Color currentColor = Color.BLACK;
 
     // Enum para las herramientas de dibujo
-    private enum DrawingTool {
-        BRUSH, LINE, RECTANGLE, CIRCLE
-    }
 
-    private DrawingTool currentTool = DrawingTool.BRUSH;
     private Vector2 shapeStartPosition;
 
 
@@ -70,7 +65,9 @@ public class PaintScreen implements Screen {
         this.localUser = new User(userName, Color.BLACK, 5);
         this.session.addUser(localUser);
 
-        setupUI();
+        UserInterface userInterface = new UserInterface(localUser);
+        stage.addActor(userInterface);
+        //setupUI();
 
         serverConnection.start(); //Lanzo hilo para escuchar desde el server
     }
@@ -82,21 +79,7 @@ public class PaintScreen implements Screen {
         toolbarTable.top().left();
 
         // Botón de pantalla completa
-        fullScreenButton = new TextButton("Enter Fullscreen", skin);
-        fullScreenButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                if (!isFullScreen) {
-                    Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
-                    isFullScreen = true;
-                    fullScreenButton.setText("Exit Fullscreen");
-                } else {
-                    Gdx.graphics.setWindowedMode(1280, 720);
-                    isFullScreen = false;
-                    fullScreenButton.setText("Enter Fullscreen");
-                }
-            }
-        });
+        FullScreenButton fullScreenButton = new FullScreenButton(skin);
 
         // Botón para aumentar grosor del pincel
         increaseBrushButton = new TextButton("+ Brush", skin);
@@ -224,7 +207,6 @@ public class PaintScreen implements Screen {
         localUser.setColor(color);
 
         // IMPORTANTE: Actualizar el color del Pixmap del canvas
-        this.currentColor = color;
 
         // Resetear todos los botones de color
         blueColorButton.setColor(Color.WHITE);
@@ -247,7 +229,6 @@ public class PaintScreen implements Screen {
         }
     }
     private void setCurrentTool(DrawingTool tool) {
-        currentTool = tool;
 
         // Resetear todos los botones
         brushToolButton.setColor(Color.WHITE);
@@ -283,7 +264,7 @@ public class PaintScreen implements Screen {
             game.shapeRenderer.setColor(localUser.getColor().r, localUser.getColor().g,
                 localUser.getColor().b, 0.5f); // Semi-transparente
 
-            switch (currentTool) {
+            switch (localUser.getCurrentTool()) {
                 case LINE:
                     game.shapeRenderer.line(shapeStartPosition.x, shapeStartPosition.y,
                         currentPos.x, currentPos.y);
@@ -310,7 +291,7 @@ public class PaintScreen implements Screen {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(Gdx.gl20.GL_COLOR_BUFFER_BIT);
 
-        updateBrushSettings();
+        //updateBrushSettings();
         handleInput();
 
         game.viewport.apply();
@@ -334,7 +315,7 @@ public class PaintScreen implements Screen {
             Vector2 current = new Vector2(Gdx.input.getX(), Gdx.input.getY());
             game.viewport.project(current);
 
-            if (currentTool != DrawingTool.BRUSH) {
+            if (localUser.getCurrentTool() != DrawingTool.BRUSH) {
                 shapeStartPosition = new Vector2(current);
                 game.viewport.unproject(shapeStartPosition);
             }
@@ -344,12 +325,12 @@ public class PaintScreen implements Screen {
             Vector2 current = new Vector2(Gdx.input.getX(), Gdx.input.getY());
             game.viewport.project(current);
 
-            if (currentTool == DrawingTool.BRUSH) {
+            if (localUser.getCurrentTool() == DrawingTool.BRUSH) {
                 DrawAction action;
                 if (lastDrawPosition != null) {
-                    action = new DrawAction(currentColor,localUser.getBrushSize(), (int) lastDrawPosition.x, (int) lastDrawPosition.y, (int) current.x, (int) current.y);
+                    action = new DrawAction(localUser.getColor(),localUser.getBrushSize(), (int) lastDrawPosition.x, (int) lastDrawPosition.y, (int) current.x, (int) current.y);
                 } else {
-                    action = new DrawAction(currentColor, localUser.getBrushSize(), (int) current.x, (int) current.y, (int) current.x, (int) current.y);
+                    action = new DrawAction(localUser.getColor(), localUser.getBrushSize(), (int) current.x, (int) current.y, (int) current.x, (int) current.y);
                 }
                 session.applyAction(action);
                 lastDrawPosition = current;
@@ -375,9 +356,9 @@ public class PaintScreen implements Screen {
     private void createShapeAction(Vector2 start, Vector2 end) {
         game.viewport.unproject(start);
         game.viewport.project(end);
-        switch (currentTool) {
+        switch (localUser.getCurrentTool()) {
             case LINE:
-                DrawAction lineAction = new DrawAction(currentColor, localUser.getBrushSize(), (int) start.x, (int) start.y, (int) end.x, (int) end.y);
+                DrawAction lineAction = new DrawAction(this.localUser.getColor(), localUser.getBrushSize(), (int) start.x, (int) start.y, (int) end.x, (int) end.y);
                 session.applyAction(lineAction);
                 break;
             case RECTANGLE:
@@ -396,10 +377,10 @@ public class PaintScreen implements Screen {
         int maxY = (int) Math.max(start.y, end.y);
 
         // Dibujar los cuatro lados del rectángulo
-        DrawAction topSide = new DrawAction(currentColor, localUser.getBrushSize(), minX, maxY, maxX, maxY);
-        DrawAction bottomSide = new DrawAction(currentColor, localUser.getBrushSize(), minX, minY, maxX, minY);
-        DrawAction leftSide = new DrawAction(currentColor, localUser.getBrushSize(), minX, minY, minX, maxY);
-        DrawAction rightSide = new DrawAction(currentColor, localUser.getBrushSize(), maxX, minY, maxX, maxY);
+        DrawAction topSide = new DrawAction(localUser.getColor(), localUser.getBrushSize(), minX, maxY, maxX, maxY);
+        DrawAction bottomSide = new DrawAction(localUser.getColor(), localUser.getBrushSize(), minX, minY, maxX, minY);
+        DrawAction leftSide = new DrawAction(localUser.getColor(), localUser.getBrushSize(), minX, minY, minX, maxY);
+        DrawAction rightSide = new DrawAction(localUser.getColor(), localUser.getBrushSize(), maxX, minY, maxX, maxY);
 
         session.applyAction(topSide);
         session.applyAction(bottomSide);
@@ -429,7 +410,7 @@ public class PaintScreen implements Screen {
             Vector2 currentPoint = new Vector2(x, y);
 
             if (prevPoint != null) {
-                DrawAction circleSegment = new DrawAction(currentColor, localUser.getBrushSize(), (int) prevPoint.x, (int) prevPoint.y, x, y);
+                DrawAction circleSegment = new DrawAction(localUser.getColor(), localUser.getBrushSize(), (int) prevPoint.x, (int) prevPoint.y, x, y);
                 session.applyAction(circleSegment);
                 serverConnection.sendActionToServer(circleSegment);
             }
