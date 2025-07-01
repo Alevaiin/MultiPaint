@@ -93,7 +93,7 @@ public class PaintScreen implements Screen {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(Gdx.gl20.GL_COLOR_BUFFER_BIT);
 
-        //updateBrushSettings();
+        updateBrushSettings();
         handleInput();
 
         game.viewport.apply();
@@ -193,6 +193,38 @@ public class PaintScreen implements Screen {
         serverConnection.sendActionToServer(bottomSide);
         serverConnection.sendActionToServer(leftSide);
         serverConnection.sendActionToServer(rightSide);
+    }
+
+    private void updateBrushSettings() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP) ) {
+            localUser.setBrushSize(localUser.getBrushSize() + 1);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+            int currentSize = localUser.getBrushSize();
+            if (currentSize > 1) {
+                localUser.setBrushSize(currentSize - 1);
+            }
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+            Color current = localUser.getColor();
+            Color newColor = current.equals(Color.BLACK) ? Color.WHITE : Color.BLACK;
+            this.localUser.setColor(newColor); // Usar setCurrentColor en lugar de localUser.setColor
+        }
+
+        // Atajos de teclado para herramientas
+        if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+            this.localUser.setCurrentTool(DrawingTool.BRUSH);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
+            this.localUser.setCurrentTool(DrawingTool.LINE);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+            this.localUser.setCurrentTool(DrawingTool.RECTANGLE);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.O)) {
+            this.localUser.setCurrentTool(DrawingTool.CIRCLE);
+        }
     }
 
     private void drawCircle(Vector2 start, Vector2 end) {
