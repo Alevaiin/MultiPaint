@@ -4,7 +4,6 @@ package com.m4.multipaint.drawing;
 import com.badlogic.gdx.graphics.Color;
 
 public class DrawAction {
-    private final User user;
     private final int startX;
     private final int startY;
     private final int endX;
@@ -12,20 +11,9 @@ public class DrawAction {
     private final Color color;
     private final int size;
 
-    @Deprecated //No tiene sentido q identifiquemos de que usuario vino la accion, lo depreco para no romper lo q ya esta hecho
-    public DrawAction(User user, int startX, int startY, int endX, int endY) {
-        this.user = user;
-        this.color = user.getColor();
-        this.size = user.getBrushSize();
-        this.startX = startX;
-        this.startY = startY;
-        this.endX = endX;
-        this.endY = endY;
-    }
 
     public DrawAction(Color color, int size, int startX, int startY, int endX, int endY) {
         this.size = size;
-        this.user = null;
         this.color = color;
         this.startX = startX;
         this.startY = startY;

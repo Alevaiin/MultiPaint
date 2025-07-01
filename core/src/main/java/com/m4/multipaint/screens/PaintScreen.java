@@ -378,7 +378,7 @@ public class PaintScreen implements Screen {
         game.viewport.project(end);
         switch (currentTool) {
             case LINE:
-                DrawAction lineAction = new DrawAction(localUser, (int) start.x, (int) start.y, (int) end.x, (int) end.y);
+                DrawAction lineAction = new DrawAction(currentColor, localUser.getBrushSize(), (int) start.x, (int) start.y, (int) end.x, (int) end.y);
                 session.applyAction(lineAction);
                 serverConnection.sendActionToServer(lineAction);
                 break;
@@ -398,10 +398,10 @@ public class PaintScreen implements Screen {
         int maxY = (int) Math.max(start.y, end.y);
 
         // Dibujar los cuatro lados del rectángulo
-        DrawAction topSide = new DrawAction(localUser, minX, maxY, maxX, maxY);
-        DrawAction bottomSide = new DrawAction(localUser, minX, minY, maxX, minY);
-        DrawAction leftSide = new DrawAction(localUser, minX, minY, minX, maxY);
-        DrawAction rightSide = new DrawAction(localUser, maxX, minY, maxX, maxY);
+        DrawAction topSide = new DrawAction(currentColor, localUser.getBrushSize(), minX, maxY, maxX, maxY);
+        DrawAction bottomSide = new DrawAction(currentColor, localUser.getBrushSize(), minX, minY, maxX, minY);
+        DrawAction leftSide = new DrawAction(currentColor, localUser.getBrushSize(), minX, minY, minX, maxY);
+        DrawAction rightSide = new DrawAction(currentColor, localUser.getBrushSize(), maxX, minY, maxX, maxY);
 
         session.applyAction(topSide);
         session.applyAction(bottomSide);
@@ -431,7 +431,7 @@ public class PaintScreen implements Screen {
             Vector2 currentPoint = new Vector2(x, y);
 
             if (prevPoint != null) {
-                DrawAction circleSegment = new DrawAction(localUser, (int) prevPoint.x, (int) prevPoint.y, x, y);
+                DrawAction circleSegment = new DrawAction(currentColor, localUser.getBrushSize(), (int) prevPoint.x, (int) prevPoint.y, x, y);
                 session.applyAction(circleSegment);
                 serverConnection.sendActionToServer(circleSegment);
             }
