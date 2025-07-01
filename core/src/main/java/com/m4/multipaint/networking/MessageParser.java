@@ -8,7 +8,7 @@ public class MessageParser
 
     public static DrawAction parseDrawAction(String message){
         String[] fields = message.split("\\|");
-        Color color = new Color(Integer.parseInt(fields[0]));
+        Color color = Color.valueOf(fields[0]);
         int size = Integer.parseInt(fields[1]);
         int startX = Integer.parseInt(fields[2]);
         int startY = Integer.parseInt(fields[3]);

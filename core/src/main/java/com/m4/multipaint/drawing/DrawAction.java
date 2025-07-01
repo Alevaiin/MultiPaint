@@ -40,6 +40,6 @@ public class DrawAction {
     @Override
     public String toString()
     {
-        return String.format("%s|%d|%s|%s|%s|%s",Color.argb8888(this.color),this.size,startX,startY,endX,endY);
+        return String.format("%s|%s|%s|%s|%s|%s",this.color,this.size,startX,startY,endX,endY);
     }
 }

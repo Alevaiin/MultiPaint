@@ -41,6 +41,7 @@ public class PaintScreen implements Screen {
     private TextButton greenColorButton;
     private ServerConnection serverConnection;
     private boolean wasLeftButtonPressed = false;
+    private Color currentColor = Color.BLACK;
 
     // Enum para las herramientas de dibujo
     private enum DrawingTool {
@@ -223,7 +224,7 @@ public class PaintScreen implements Screen {
         localUser.setColor(color);
 
         // IMPORTANTE: Actualizar el color del Pixmap del canvas
-        session.getCanvas().getPixmap().setColor(color);
+        this.currentColor = color;
 
         // Resetear todos los botones de color
         blueColorButton.setColor(Color.WHITE);
@@ -346,9 +347,9 @@ public class PaintScreen implements Screen {
             if (currentTool == DrawingTool.BRUSH) {
                 DrawAction action;
                 if (lastDrawPosition != null) {
-                    action = new DrawAction(localUser.getColor(),localUser.getBrushSize(), (int) lastDrawPosition.x, (int) lastDrawPosition.y, (int) current.x, (int) current.y);
+                    action = new DrawAction(currentColor,localUser.getBrushSize(), (int) lastDrawPosition.x, (int) lastDrawPosition.y, (int) current.x, (int) current.y);
                 } else {
-                    action = new DrawAction(localUser.getColor(), localUser.getBrushSize(), (int) current.x, (int) current.y, (int) current.x, (int) current.y);
+                    action = new DrawAction(currentColor, localUser.getBrushSize(), (int) current.x, (int) current.y, (int) current.x, (int) current.y);
                 }
                 session.applyAction(action);
                 serverConnection.sendActionToServer(action);

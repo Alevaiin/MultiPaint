@@ -1,6 +1,5 @@
 package com.m4.multipaint.drawing;
 
-import com.badlogic.gdx.Gdx;
 import com.m4.multipaint.networking.ServerConnection;
 
 import java.util.HashMap;
@@ -23,7 +22,6 @@ public class DrawSession {
     }
 
     public void applyAction(DrawAction action) {
-        Gdx.app.log("DRAWSESSION", "Applying action: " + action);
         action.apply(canvas);
     }
 

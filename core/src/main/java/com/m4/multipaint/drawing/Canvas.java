@@ -32,8 +32,8 @@ public class Canvas {
         int stepY = startY < endY ? 1 : -1;
         int error = deltaX - deltaY;
 
+        pixmap.setColor(color); //TODO: Chequear sincronziacion, posible race condition
         while (true) {
-            pixmap.setColor(color); //TODO: el color no deberia cambiar aca, esto es para probar mensajes recibidos
             pixmap.fillCircle(startX, startY, size);
             if (startX == endX && startY == endY) break;
 
