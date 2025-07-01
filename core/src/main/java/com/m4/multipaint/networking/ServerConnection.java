@@ -76,7 +76,7 @@ public class ServerConnection extends Thread
         Gdx.app.log("NETWORK", "Receiving: "+message);
         if(drawSession != null){
             DrawAction incomingAction = MessageParser.parseDrawAction(message);
-            Gdx.app.postRunnable( () -> drawSession.applyAction(incomingAction));
+            Gdx.app.postRunnable( () -> drawSession.applyRemoteAction(incomingAction));
         }
     }
 

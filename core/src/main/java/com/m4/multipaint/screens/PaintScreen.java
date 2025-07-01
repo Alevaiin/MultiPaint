@@ -352,7 +352,6 @@ public class PaintScreen implements Screen {
                     action = new DrawAction(currentColor, localUser.getBrushSize(), (int) current.x, (int) current.y, (int) current.x, (int) current.y);
                 }
                 session.applyAction(action);
-                serverConnection.sendActionToServer(action);
                 lastDrawPosition = current;
             }
         }
@@ -380,7 +379,6 @@ public class PaintScreen implements Screen {
             case LINE:
                 DrawAction lineAction = new DrawAction(currentColor, localUser.getBrushSize(), (int) start.x, (int) start.y, (int) end.x, (int) end.y);
                 session.applyAction(lineAction);
-                serverConnection.sendActionToServer(lineAction);
                 break;
             case RECTANGLE:
                 drawRectangle(start, end);

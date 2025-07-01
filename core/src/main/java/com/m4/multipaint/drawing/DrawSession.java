@@ -8,6 +8,7 @@ import java.util.Map;
 public class DrawSession {
     private Canvas canvas;
     private final Map<String, User> users;
+    private final ServerConnection serverConnection;
 
     public DrawSession(Canvas canvas, ServerConnection serverConnection) {
         this.canvas = canvas;
@@ -15,6 +16,7 @@ public class DrawSession {
         if(serverConnection != null){
             serverConnection.setDrawSession(this);
         }
+        this.serverConnection = serverConnection;
     }
 
     public void addUser(User user) {
@@ -22,6 +24,12 @@ public class DrawSession {
     }
 
     public void applyAction(DrawAction action) {
+        action.apply(canvas);
+        if(this.serverConnection != null)
+            serverConnection.sendActionToServer(action);
+    }
+
+    public void applyRemoteAction(DrawAction action){
         action.apply(canvas);
     }
 
