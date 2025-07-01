@@ -11,14 +11,9 @@ import com.m4.multipaint.networking.ServerConnection;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.m4.multipaint.ui.UserInterface;
-import com.m4.multipaint.ui.buttons.FullScreenButton;
 
 
 public class PaintScreen implements Screen {
@@ -28,18 +23,7 @@ public class PaintScreen implements Screen {
     private Vector2 lastDrawPosition;
     private final Stage stage;
     private final Skin skin;
-    private TextButton increaseBrushButton;
-    private TextButton decreaseBrushButton;
-    private TextButton brushToolButton;
-    private TextButton lineToolButton;
-    private TextButton rectangleToolButton;
-    private TextButton circleToolButton;
-    private TextButton blueColorButton;
-    private TextButton redColorButton;
-    private TextButton yellowColorButton;
-    private TextButton blackColorButton;
-    private TextButton greenColorButton;
-    private ServerConnection serverConnection;
+    private final ServerConnection serverConnection;
     private boolean wasLeftButtonPressed = false;
 
     // Enum para las herramientas de dibujo
@@ -67,190 +51,8 @@ public class PaintScreen implements Screen {
 
         UserInterface userInterface = new UserInterface(localUser);
         stage.addActor(userInterface);
-        //setupUI();
 
         serverConnection.start(); //Lanzo hilo para escuchar desde el server
-    }
-
-    private void setupUI() {
-        // Crear tabla para organizar los botones de la barra de herramientas
-        Table toolbarTable = new Table();
-        toolbarTable.setFillParent(true);
-        toolbarTable.top().left();
-
-        // Botón de pantalla completa
-        FullScreenButton fullScreenButton = new FullScreenButton(skin);
-
-        // Botón para aumentar grosor del pincel
-        increaseBrushButton = new TextButton("+ Brush", skin);
-        increaseBrushButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                localUser.setBrushSize(localUser.getBrushSize() + 1);
-            }
-        });
-
-        // Botón para disminuir grosor del pincel
-        decreaseBrushButton = new TextButton("- Brush", skin);
-        decreaseBrushButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                int currentSize = localUser.getBrushSize();
-                if (currentSize > 1) {
-                    localUser.setBrushSize(currentSize - 1);
-                }
-            }
-        });
-
-        // Herramientas de dibujo
-        brushToolButton = new TextButton("Brush", skin);
-        brushToolButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                setCurrentTool(DrawingTool.BRUSH);
-            }
-        });
-
-        lineToolButton = new TextButton("Line", skin);
-        lineToolButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                setCurrentTool(DrawingTool.LINE);
-            }
-        });
-
-        rectangleToolButton = new TextButton("Rectangle", skin);
-        rectangleToolButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                setCurrentTool(DrawingTool.RECTANGLE);
-            }
-        });
-
-        circleToolButton = new TextButton("Circle", skin);
-        circleToolButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                setCurrentTool(DrawingTool.CIRCLE);
-            }
-        });
-
-        // Botones de colores
-        blueColorButton = new TextButton("Blue", skin);
-        blueColorButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                setCurrentColor(Color.BLUE);
-            }
-        });
-
-        redColorButton = new TextButton("Red", skin);
-        redColorButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                setCurrentColor(Color.RED);
-            }
-        });
-
-        yellowColorButton = new TextButton("Yellow", skin);
-        yellowColorButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                setCurrentColor(Color.YELLOW);
-            }
-        });
-
-        blackColorButton = new TextButton("Black", skin);
-        blackColorButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                setCurrentColor(Color.BLACK);
-            }
-        });
-
-        greenColorButton = new TextButton("Green", skin);
-        greenColorButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                setCurrentColor(Color.GREEN);
-            }
-        });
-
-        // Agregar botones a la tabla con espaciado - Primera fila
-        toolbarTable.add(fullScreenButton).width(120).height(40).pad(5);
-        toolbarTable.add(increaseBrushButton).width(80).height(40).pad(5);
-        toolbarTable.add(decreaseBrushButton).width(80).height(40).pad(5);
-        toolbarTable.row();
-
-        // Segunda fila - Herramientas de dibujo
-        toolbarTable.add(brushToolButton).width(80).height(40).pad(5);
-        toolbarTable.add(lineToolButton).width(80).height(40).pad(5);
-        toolbarTable.add(rectangleToolButton).width(80).height(40).pad(5);
-        toolbarTable.add(circleToolButton).width(80).height(40).pad(5);
-        toolbarTable.row();
-
-        // Tercera fila - Colores
-        toolbarTable.add(blueColorButton).width(80).height(40).pad(5);
-        toolbarTable.add(redColorButton).width(80).height(40).pad(5);
-        toolbarTable.add(yellowColorButton).width(80).height(40).pad(5);
-        toolbarTable.add(blackColorButton).width(80).height(40).pad(5);
-        toolbarTable.add(greenColorButton).width(80).height(40).pad(5);
-
-        // Establecer herramienta inicial y color inicial
-        setCurrentTool(DrawingTool.BRUSH);
-        setCurrentColor(Color.BLACK);
-
-        stage.addActor(toolbarTable);
-    }
-
-    private void setCurrentColor(Color color) {
-        localUser.setColor(color);
-
-        // IMPORTANTE: Actualizar el color del Pixmap del canvas
-
-        // Resetear todos los botones de color
-        blueColorButton.setColor(Color.WHITE);
-        redColorButton.setColor(Color.WHITE);
-        yellowColorButton.setColor(Color.WHITE);
-        blackColorButton.setColor(Color.WHITE);
-        greenColorButton.setColor(Color.WHITE);
-
-        // Resaltar color activo
-        if (color.equals(Color.BLUE)) {
-            blueColorButton.setColor(Color.LIGHT_GRAY);
-        } else if (color.equals(Color.RED)) {
-            redColorButton.setColor(Color.LIGHT_GRAY);
-        } else if (color.equals(Color.YELLOW)) {
-            yellowColorButton.setColor(Color.LIGHT_GRAY);
-        } else if (color.equals(Color.BLACK)) {
-            blackColorButton.setColor(Color.LIGHT_GRAY);
-        } else if (color.equals(Color.GREEN)) {
-            greenColorButton.setColor(Color.LIGHT_GRAY);
-        }
-    }
-    private void setCurrentTool(DrawingTool tool) {
-
-        // Resetear todos los botones
-        brushToolButton.setColor(Color.WHITE);
-        lineToolButton.setColor(Color.WHITE);
-        rectangleToolButton.setColor(Color.WHITE);
-        circleToolButton.setColor(Color.WHITE);
-
-        // Resaltar herramienta activa
-        switch (tool) {
-            case BRUSH:
-                brushToolButton.setColor(Color.LIGHT_GRAY);
-                break;
-            case LINE:
-                lineToolButton.setColor(Color.LIGHT_GRAY);
-                break;
-            case RECTANGLE:
-                rectangleToolButton.setColor(Color.LIGHT_GRAY);
-                break;
-            case CIRCLE:
-                circleToolButton.setColor(Color.LIGHT_GRAY);
-                break;
-        }
     }
 
     private void renderShapePreview() {
@@ -416,38 +218,6 @@ public class PaintScreen implements Screen {
             }
 
             prevPoint = currentPoint;
-        }
-    }
-
-    private void updateBrushSettings() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP) ) {
-            localUser.setBrushSize(localUser.getBrushSize() + 1);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-            int currentSize = localUser.getBrushSize();
-            if (currentSize > 1) {
-                localUser.setBrushSize(currentSize - 1);
-            }
-        }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
-            Color current = localUser.getColor();
-            Color newColor = current.equals(Color.BLACK) ? Color.WHITE : Color.BLACK;
-            setCurrentColor(newColor); // Usar setCurrentColor en lugar de localUser.setColor
-        }
-
-        // Atajos de teclado para herramientas
-        if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
-            setCurrentTool(DrawingTool.BRUSH);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
-            setCurrentTool(DrawingTool.LINE);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-            setCurrentTool(DrawingTool.RECTANGLE);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.O)) {
-            setCurrentTool(DrawingTool.CIRCLE);
         }
     }
 
