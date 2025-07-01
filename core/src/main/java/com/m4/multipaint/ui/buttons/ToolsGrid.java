@@ -2,6 +2,7 @@ package com.m4.multipaint.ui.buttons;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.m4.multipaint.Constants;
 import com.m4.multipaint.drawing.DrawingTool;
 import com.m4.multipaint.drawing.User;
 import com.m4.multipaint.ui.UserInterface;
@@ -34,9 +35,9 @@ public class ToolsGrid
     }
 
     public void addToUI(UserInterface UI){
-        UI.add(brushButton).width(80).height(40).pad(5);
-        UI.add(lineButton).width(80).height(40).pad(5);
-        UI.add(rectangleButton).width(80).height(40).pad(5);
-        UI.add(circleButton).width(80).height(40).pad(5);
+        UI.add(brushButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);
+        UI.add(lineButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);
+        UI.add(rectangleButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);
+        UI.add(circleButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);
     }
 }

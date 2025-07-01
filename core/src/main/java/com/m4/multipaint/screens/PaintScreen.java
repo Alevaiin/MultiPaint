@@ -5,13 +5,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.m4.multipaint.Constants;
 import com.m4.multipaint.MultiPaint;
 import com.m4.multipaint.drawing.*;
 import com.m4.multipaint.networking.ServerConnection;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.m4.multipaint.ui.UserInterface;
@@ -23,11 +21,8 @@ public class PaintScreen implements Screen {
     private final User localUser;
     private Vector2 lastDrawPosition;
     private final Stage stage;
-    private final Skin skin;
     private final ServerConnection serverConnection;
     private boolean wasLeftButtonPressed = false;
-
-    // Enum para las herramientas de dibujo
 
     private Vector2 shapeStartPosition;
 
@@ -39,7 +34,6 @@ public class PaintScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         this.serverConnection = serverConnection;
 
-        this.skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         int canvasWidth = Gdx.graphics.getDisplayMode().width;
         int canvasHeight = Gdx.graphics.getDisplayMode().height;
@@ -50,8 +44,7 @@ public class PaintScreen implements Screen {
         this.localUser = new User(userName, Color.BLACK);
         this.session.addUser(localUser);
 
-        UserInterface userInterface = new UserInterface(localUser);
-        stage.addActor(userInterface);
+        stage.addActor(new UserInterface(localUser));
 
         serverConnection.start(); //Lanzo hilo para escuchar desde el server
     }
@@ -207,10 +200,9 @@ public class PaintScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
             Color current = localUser.getColor();
             Color newColor = current.equals(Color.BLACK) ? Color.WHITE : Color.BLACK;
-            this.localUser.setColor(newColor); // Usar setCurrentColor en lugar de localUser.setColor
+            this.localUser.setColor(newColor);
         }
 
-        // Atajos de teclado para herramientas
         if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
             this.localUser.setCurrentTool(DrawingTool.BRUSH);
         }
@@ -282,7 +274,6 @@ public class PaintScreen implements Screen {
     public void dispose() {
         session.getCanvas().dispose();
         stage.dispose();
-        skin.dispose();
         serverConnection.disconnect();
     }
 }

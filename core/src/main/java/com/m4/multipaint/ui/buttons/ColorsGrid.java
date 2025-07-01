@@ -2,6 +2,7 @@ package com.m4.multipaint.ui.buttons;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.m4.multipaint.Constants;
 import com.m4.multipaint.drawing.User;
 import com.m4.multipaint.ui.UserInterface;
 
@@ -36,11 +37,10 @@ public class ColorsGrid
     }
 
     public void addToUI(UserInterface ui){
-        ui.add(blueButton).width(80).height(40).pad(5);
-        ui.add(redButton).width(80).height(40).pad(5);
-        ui.add(yellowButton).width(80).height(40).pad(5);
-        ui.add(blackButton).width(80).height(40).pad(5);
-        ui.add(greenButton).width(80).height(40).pad(5);
-        //ui.add(whiteButton).width(80).height(40).pad(5);
+        ui.add(blueButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);
+        ui.add(redButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);
+        ui.add(yellowButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);
+        ui.add(blackButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);
+        ui.add(greenButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);
     }
 }
