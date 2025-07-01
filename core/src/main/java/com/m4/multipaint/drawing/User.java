@@ -1,6 +1,7 @@
 package com.m4.multipaint.drawing;
 
 import com.badlogic.gdx.graphics.Color;
+import com.m4.multipaint.Constants;
 
 public class User
 {
@@ -8,9 +9,9 @@ public class User
     private final Brush brush;
     private DrawingTool currentTool;
 
-    public User(String id, Color color, int size) {
+    public User(String id, Color color) {
         this.id = id;
-        this.brush = new Brush(size, color);
+        this.brush = new Brush(color);
         this.currentTool = DrawingTool.BRUSH;
     }
 
@@ -34,10 +35,12 @@ public class User
         return this.brush.getSize();
     }
 
-    public void setBrushSize(int brushSize) {
-        if( brushSize < 1)
-            return;
-        this.brush.setSize(brushSize);
+    public void reduceBrushSize(){
+        this.brush.setSize(this.brush.getSize() - Constants.DELTA_BRUSH_SIZE);
+    }
+
+    public void incrementBrushSize(){
+        this.brush.setSize(this.brush.getSize() + Constants.DELTA_BRUSH_SIZE);
     }
 
     public void setCurrentTool(DrawingTool drawingTool){

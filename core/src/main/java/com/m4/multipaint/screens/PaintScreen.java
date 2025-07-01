@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.m4.multipaint.Constants;
 import com.m4.multipaint.MultiPaint;
 import com.m4.multipaint.drawing.*;
 import com.m4.multipaint.networking.ServerConnection;
@@ -46,7 +47,7 @@ public class PaintScreen implements Screen {
         Canvas canvas = new Canvas(canvasWidth, canvasHeight);
         this.session = new DrawSession(canvas, serverConnection);
 
-        this.localUser = new User(userName, Color.BLACK, 5);
+        this.localUser = new User(userName, Color.BLACK);
         this.session.addUser(localUser);
 
         UserInterface userInterface = new UserInterface(localUser);
@@ -197,13 +198,10 @@ public class PaintScreen implements Screen {
 
     private void updateBrushSettings() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP) ) {
-            localUser.setBrushSize(localUser.getBrushSize() + 1);
+            localUser.incrementBrushSize();
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-            int currentSize = localUser.getBrushSize();
-            if (currentSize > 1) {
-                localUser.setBrushSize(currentSize - 1);
-            }
+            localUser.reduceBrushSize();
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
