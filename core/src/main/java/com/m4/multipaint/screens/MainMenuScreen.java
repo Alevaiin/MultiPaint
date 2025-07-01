@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.m4.multipaint.Constants;
 import com.m4.multipaint.MultiPaint;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
@@ -26,7 +27,7 @@ public class MainMenuScreen implements Screen
 
         this.game = game;
         this.stage = new Stage(new ScreenViewport());
-        this.skin = new Skin(Gdx.files.internal("uiskin.json"));
+        this.skin = new Skin(Gdx.files.internal(Constants.UI_SKIN_FILE_NAME));
         Gdx.input.setInputProcessor(stage);
 
         Table table = new Table();
@@ -34,13 +35,13 @@ public class MainMenuScreen implements Screen
         stage.addActor(table);
 
         Label ipLabel = new Label("Server IP", skin);
-        TextField ipField = new TextField("192.168.1.37", skin);
+        TextField ipField = new TextField(Constants.DEFAULT_IP, skin);
 
         Label portLabel = new Label("Server Port", skin);
-        TextField portField = new TextField("6666", skin);
+        TextField portField = new TextField(Constants.DEFAULT_PORT, skin);
 
         Label userNameLabel = new Label("User Name", skin);
-        TextField userNameField = new TextField("Player 1", skin);
+        TextField userNameField = new TextField(Constants.DEFAULT_USER_NAME, skin);
 
         TextButton startButton = new TextButton("Start Drawing", skin);
         startButton.addListener(new ChangeListener() {
@@ -172,13 +173,13 @@ public class MainMenuScreen implements Screen
 
     private boolean isValidIp(String ip) {
         //https://stackoverflow.com/questions/5284147/validating-ipv4-addresses-with-regexp
-        return ip.matches("^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}$");
+        return ip.matches(Constants.IP_VALIDATION_REGEX);
     }
 
     private boolean isValidPort(String portText) {
         try {
             int port = Integer.parseInt(portText);
-            return port >= 1 && port <= 65535;
+            return port >= Constants.MIN_PORT && port <= Constants.MAX_PORT;
         } catch (NumberFormatException e) {
             return false;
         }
