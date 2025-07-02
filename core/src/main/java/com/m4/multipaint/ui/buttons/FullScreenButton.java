@@ -31,7 +31,7 @@ public class FullScreenButton extends TextButton
                     Gdx.graphics.setWindowedMode(Constants.SCREEN_RESOLUTION_W, Constants.SCREEN_RESOLUTION_H);
                     userInterface.setWindowedMode();
                     isFullScreen = false;
-                    setText("Enter Fullscreen");
+                    setText("Fullscreen");
                 }
             }
         });

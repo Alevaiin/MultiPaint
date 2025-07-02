@@ -33,5 +33,5 @@ public class Constants
     public final static int MIN_PORT = 1;
     public final static String DEFAULT_IP = "0.0.0.0";
     public final static String DEFAULT_PORT = "6666";
-    public final static String DEFAULT_USER_NAME = "Player 1";
+    public final static String DEFAULT_USER_NAME = "Participante 1";
 }

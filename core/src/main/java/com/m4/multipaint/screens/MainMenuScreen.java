@@ -35,16 +35,16 @@ public class MainMenuScreen implements Screen
         table.setFillParent(true);
         stage.addActor(table);
 
-        Label ipLabel = new Label("Server IP", skin);
+        Label ipLabel = new Label("IP", skin);
         TextField ipField = new TextField(Constants.DEFAULT_IP, skin);
 
-        Label portLabel = new Label("Server Port", skin);
+        Label portLabel = new Label("Puerto", skin);
         TextField portField = new TextField(Constants.DEFAULT_PORT, skin);
 
-        Label userNameLabel = new Label("User Name", skin);
+        Label userNameLabel = new Label("Nombre", skin);
         TextField userNameField = new TextField(Constants.DEFAULT_USER_NAME, skin);
 
-        TextButton startButton = new TextButton("Start Drawing", skin);
+        TextButton startButton = new TextButton("Empieza a dibujar", skin);
         startButton.addListener(new ChangeListener()
         {
             @Override
@@ -73,7 +73,7 @@ public class MainMenuScreen implements Screen
                     try
                     {
                         startButton.setDisabled(true);
-                        startButton.setText("Connecting");
+                        startButton.setText("Conectando");
                         ServerConnection testConnection = new ServerConnection(userName, ip, port);
                         testConnection.connect();
                         String response = testConnection.readNextMessage();
@@ -83,7 +83,7 @@ public class MainMenuScreen implements Screen
                             {
                                 showErrorDialog(response);
                                 startButton.setDisabled(false);
-                                startButton.setText("Start Drawing");
+                                startButton.setText("Empieza a dibujar");
                             });
                         } else if (testConnection.isConnected())
                         {
@@ -98,7 +98,7 @@ public class MainMenuScreen implements Screen
                             {
                                 showErrorDialog("No se pudo conectar al servidor, revise los datos de conexion.");
                                 startButton.setDisabled(false);
-                                startButton.setText("Start Drawing");
+                                startButton.setText("Empieza a dibujar");
                             });
                         }
                     } catch (Exception e)
@@ -107,7 +107,7 @@ public class MainMenuScreen implements Screen
                         {
                             showErrorDialog("No se pudo conectar al servidor, revise los datos de conexion.");
                             startButton.setDisabled(false);
-                            startButton.setText("Start Drawing");
+                            startButton.setText("Empieza a dibujar");
                         });
                     }
                 }).start();
@@ -143,8 +143,8 @@ public class MainMenuScreen implements Screen
 
         game.font.getData().setScale(1.5f);
 
-        GlyphLayout layout1 = new GlyphLayout(game.font, "Welcome to MultiPaint!!!");
-        GlyphLayout layout2 = new GlyphLayout(game.font, "Enter your details below to start");
+        GlyphLayout layout1 = new GlyphLayout(game.font, "Bienvenido a MultiPaint!!!");
+        GlyphLayout layout2 = new GlyphLayout(game.font, "Completa los campos para iniciar");
 
         float x1 = (game.viewport.getWorldWidth() - layout1.width) / 2;
         float x2 = (game.viewport.getWorldWidth() - layout2.width) / 2;
@@ -153,8 +153,8 @@ public class MainMenuScreen implements Screen
         float spacing = layout1.height * 2;
 
         game.batch.begin();
-        game.font.draw(game.batch, "Welcome to MultiPaint!!!", x1, baseY);
-        game.font.draw(game.batch, "Enter your details below to start", x2, baseY - spacing);
+        game.font.draw(game.batch, "Bienvenido a MultiPaint!!!", x1, baseY);
+        game.font.draw(game.batch, "Completa los campos para iniciar", x2, baseY - spacing);
         game.batch.end();
 
         stage.act(delta);
