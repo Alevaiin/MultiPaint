@@ -20,8 +20,8 @@ public class MainMenuScreen implements Screen
 {
 
     final MultiPaint game;
-    private Stage stage;
-    private Skin skin;
+    private final Stage stage;
+    private final Skin skin;
 
     public MainMenuScreen(MultiPaint game)
     {
@@ -77,14 +77,18 @@ public class MainMenuScreen implements Screen
                         ServerConnection testConnection = new ServerConnection(userName, ip, port);
                         testConnection.connect();
                         String response = testConnection.readNextMessage();
-                        if (!response.equals("OK")){
-                            Gdx.app.postRunnable(() -> {
+                        if (!response.equals("OK"))
+                        {
+                            Gdx.app.postRunnable(() ->
+                            {
                                 showErrorDialog(response);
                                 startButton.setDisabled(false);
                                 startButton.setText("Start Drawing");
                             });
-                        }else if (testConnection.isConnected()) {
-                            Gdx.app.postRunnable(() -> {
+                        } else if (testConnection.isConnected())
+                        {
+                            Gdx.app.postRunnable(() ->
+                            {
                                 game.setScreen(new PaintScreen(game, userName, testConnection));
                                 dispose();
                             });

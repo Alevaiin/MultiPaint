@@ -31,11 +31,11 @@ public class UserInterface extends Table implements Disposable
 
     private void setupUI()
     {
-        final Pixmap pixmap = new Pixmap(1,1,Pixmap.Format.RGBA8888);
+        final Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(Color.LIGHT_GRAY);
         pixmap.fill();
         this.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture((pixmap)))));
-        FullScreenButton fullScreenButton = new FullScreenButton(skin,this);
+        FullScreenButton fullScreenButton = new FullScreenButton(skin, this);
 
         IncreaseBrushButton increaseBrushButton = new IncreaseBrushButton(skin, user);
 
@@ -60,11 +60,13 @@ public class UserInterface extends Table implements Disposable
         skin.dispose();
     }
 
-    public void setFullScreenMode(){
+    public void setFullScreenMode()
+    {
         this.setWidth(Gdx.graphics.getWidth());
     }
 
-    public void setWindowedMode(){
+    public void setWindowedMode()
+    {
         this.setWidth(Constants.SCREEN_RESOLUTION_W);
     }
 }

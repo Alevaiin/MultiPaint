@@ -33,8 +33,9 @@ public class ColorButton extends ImageButton
         this.setTransform(true);
     }
 
-    private static ImageButton.ImageButtonStyle generateStyle(Color color){
-        final Pixmap pixmap = new Pixmap(Constants.COLOR_BUTTON_SIZE,Constants.COLOR_BUTTON_SIZE,Pixmap.Format.RGBA8888);
+    private static ImageButton.ImageButtonStyle generateStyle(Color color)
+    {
+        final Pixmap pixmap = new Pixmap(Constants.COLOR_BUTTON_SIZE, Constants.COLOR_BUTTON_SIZE, Pixmap.Format.RGBA8888);
         pixmap.setColor(color);
         pixmap.fill();
 

@@ -31,11 +31,14 @@ public class ColorsGrid
 
     public void setSelectedButton(ColorButton selectedColor)
     {
-        for (ColorButton button : this.buttons ){
+        for (ColorButton button : this.buttons)
+        {
             button.clearActions();
-            if( button == selectedColor){
+            if (button == selectedColor)
+            {
                 button.addAction(Actions.scaleTo(Constants.BUTTON_SELECTED_SCALE, Constants.BUTTON_SELECTED_SCALE, Constants.BUTTON_SELECTED_ANIMATION_DURATION));
-            }else{
+            } else
+            {
                 button.addAction(Actions.scaleTo(1f, 1f, Constants.BUTTON_SELECTED_ANIMATION_DURATION));
             }
         }
@@ -43,7 +46,7 @@ public class ColorsGrid
 
     public void addToUI(UserInterface ui)
     {
-        for (ColorButton button : this.buttons )
+        for (ColorButton button : this.buttons)
         {
             ui.add(button).minSize(Constants.COLOR_BUTTON_SIZE).pad(Constants.BUTTON_PADDING);
             button.setOrigin(button.getWidth() / 2, button.getHeight() / 2);
