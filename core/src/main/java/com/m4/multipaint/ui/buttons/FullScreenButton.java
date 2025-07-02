@@ -11,16 +11,21 @@ public class FullScreenButton extends TextButton
 {
     private boolean isFullScreen = false;
 
-    public FullScreenButton(Skin skin){
+    public FullScreenButton(Skin skin)
+    {
         super("Enter Fullscreen", skin);
-        this.addListener(new ChangeListener() {
+        this.addListener(new ChangeListener()
+        {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                if (!isFullScreen) {
+            public void changed(ChangeEvent event, Actor actor)
+            {
+                if (!isFullScreen)
+                {
                     Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
                     isFullScreen = true;
                     setText("Exit Fullscreen");
-                } else {
+                } else
+                {
                     Gdx.graphics.setWindowedMode(Constants.SCREEN_RESOLUTION_W, Constants.SCREEN_RESOLUTION_H);
                     isFullScreen = false;
                     setText("Enter Fullscreen");

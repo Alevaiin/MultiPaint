@@ -10,11 +10,14 @@ import com.m4.multipaint.drawing.User;
 public class IncreaseBrushButton extends TextButton
 {
 
-    public IncreaseBrushButton(Skin skin, User user){
+    public IncreaseBrushButton(Skin skin, User user)
+    {
         super("+ Brush", skin);
-        this.addListener(new ChangeListener() {
+        this.addListener(new ChangeListener()
+        {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor)
+            {
                 user.incrementBrushSize();
             }
         });

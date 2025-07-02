@@ -10,12 +10,15 @@ import com.m4.multipaint.drawing.User;
 
 public class ColorButton extends TextButton
 {
-    public ColorButton(Color color, String text, User user, Skin skin, ColorsGrid grid){
+    public ColorButton(Color color, String text, User user, Skin skin, ColorsGrid grid)
+    {
         super(text, skin);
         ColorButton thisButton = this;
-        this.addListener(new ChangeListener() {
+        this.addListener(new ChangeListener()
+        {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor)
+            {
                 user.setColor(color);
                 grid.setSelectedButton(thisButton);
             }

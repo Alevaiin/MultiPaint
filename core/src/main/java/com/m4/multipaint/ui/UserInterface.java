@@ -13,7 +13,8 @@ public class UserInterface extends Table implements Disposable
     private final Skin skin;
     private final User user;
 
-    public UserInterface(User user){
+    public UserInterface(User user)
+    {
         this.skin = new Skin(Gdx.files.internal(Constants.UI_SKIN_FILE_NAME));
         this.user = user;
 
@@ -22,7 +23,8 @@ public class UserInterface extends Table implements Disposable
         setupUI();
     }
 
-    private void setupUI() {
+    private void setupUI()
+    {
         // Botón de pantalla completa
         FullScreenButton fullScreenButton = new FullScreenButton(skin);
 
@@ -36,7 +38,7 @@ public class UserInterface extends Table implements Disposable
         ToolsGrid toolsGrid = new ToolsGrid(user, skin);
 
         // Botones de colores
-        ColorsGrid colorsGrid = new ColorsGrid(user,skin);
+        ColorsGrid colorsGrid = new ColorsGrid(user, skin);
 
         // Agregar botones a la tabla con espaciado - Primera fila
         this.add(fullScreenButton).width(Constants.BUTTON_WIDTH_BIG).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);

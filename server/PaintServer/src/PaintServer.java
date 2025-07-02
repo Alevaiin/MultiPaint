@@ -10,7 +10,8 @@ public class PaintServer
     {
         System.out.println("Esperando conexiones...");
         serverSocket = new ServerSocket(port);
-        while(true){
+        while (true)
+        {
             Socket socket = serverSocket.accept();
             connectionsManager.addClient(socket);
         }
@@ -18,7 +19,8 @@ public class PaintServer
 
     public static void main(String[] args) throws IOException
     {
+
         PaintServer server = new PaintServer();
-        server.start(6666);
+        server.start(Constants.DEFAULT_PORT);
     }
 }

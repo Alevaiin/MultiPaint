@@ -5,43 +5,52 @@ import com.m4.multipaint.networking.ServerConnection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DrawSession {
+public class DrawSession
+{
     private Canvas canvas;
     private final Map<String, User> users;
     private final ServerConnection serverConnection;
 
-    public DrawSession(Canvas canvas, ServerConnection serverConnection) {
+    public DrawSession(Canvas canvas, ServerConnection serverConnection)
+    {
         this.canvas = canvas;
         this.users = new HashMap<>();
-        if(serverConnection != null){
+        if (serverConnection != null)
+        {
             serverConnection.setDrawSession(this);
         }
         this.serverConnection = serverConnection;
     }
 
-    public void addUser(User user) {
+    public void addUser(User user)
+    {
         users.put(user.getId(), user);
     }
 
-    public void applyAction(DrawAction action) {
+    public void applyAction(DrawAction action)
+    {
         action.apply(canvas);
-        if(this.serverConnection != null)
+        if (this.serverConnection != null)
             serverConnection.sendActionToServer(action);
     }
 
-    public void applyRemoteAction(DrawAction action){
+    public void applyRemoteAction(DrawAction action)
+    {
         action.apply(canvas);
     }
 
-    public Canvas getCanvas() {
+    public Canvas getCanvas()
+    {
         return canvas;
     }
 
-    public User getUser(String id) {
+    public User getUser(String id)
+    {
         return users.get(id);
     }
 
-    public void setCanvas(Canvas newCanvas) {
+    public void setCanvas(Canvas newCanvas)
+    {
         this.canvas = newCanvas;
     }
 }

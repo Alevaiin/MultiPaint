@@ -10,11 +10,14 @@ import com.m4.multipaint.drawing.User;
 public class DecreaseBrushButton extends TextButton
 {
 
-    public DecreaseBrushButton(Skin skin, User user){
+    public DecreaseBrushButton(Skin skin, User user)
+    {
         super("- Brush", skin);
-        this.addListener(new ChangeListener() {
+        this.addListener(new ChangeListener()
+        {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor)
+            {
                 user.reduceBrushSize();
             }
         });

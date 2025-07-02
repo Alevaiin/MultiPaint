@@ -11,13 +11,16 @@ public class ToolButton extends TextButton
 {
     public final DrawingTool drawingTool;
 
-    public ToolButton(DrawingTool drawingTool, User user, Skin skin, ToolsGrid grid){
+    public ToolButton(DrawingTool drawingTool, User user, Skin skin, ToolsGrid grid)
+    {
         super(drawingTool.label, skin);
         this.drawingTool = drawingTool;
         ToolButton thisTool = this;
-        this.addListener(new ChangeListener() {
+        this.addListener(new ChangeListener()
+        {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor)
+            {
                 user.setCurrentTool(drawingTool);
                 grid.setSelectedButton(thisTool);
             }

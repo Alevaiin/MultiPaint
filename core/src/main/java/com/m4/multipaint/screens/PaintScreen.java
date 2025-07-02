@@ -15,7 +15,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.m4.multipaint.ui.UserInterface;
 
 
-public class PaintScreen implements Screen {
+public class PaintScreen implements Screen
+{
     private final MultiPaint game;
     private final DrawSession session;
     private final User localUser;
@@ -27,7 +28,8 @@ public class PaintScreen implements Screen {
     private Vector2 shapeStartPosition;
 
 
-    public PaintScreen(MultiPaint game, String userName, ServerConnection serverConnection) {
+    public PaintScreen(MultiPaint game, String userName, ServerConnection serverConnection)
+    {
         this.game = game;
 
         this.stage = new Stage(new ScreenViewport());
@@ -49,8 +51,10 @@ public class PaintScreen implements Screen {
         serverConnection.start(); //Lanzo hilo para escuchar desde el server
     }
 
-    private void renderShapePreview() {
-        if (shapeStartPosition != null && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+    private void renderShapePreview()
+    {
+        if (shapeStartPosition != null && Gdx.input.isButtonPressed(Input.Buttons.LEFT))
+        {
             Vector2 currentPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
             game.viewport.unproject(currentPos);
 
@@ -60,7 +64,8 @@ public class PaintScreen implements Screen {
             game.shapeRenderer.setColor(localUser.getColor().r, localUser.getColor().g,
                 localUser.getColor().b, 0.5f); // Semi-transparente
 
-            switch (localUser.getCurrentTool()) {
+            switch (localUser.getCurrentTool())
+            {
                 case LINE:
                     game.shapeRenderer.line(shapeStartPosition.x, shapeStartPosition.y,
                         currentPos.x, currentPos.y);
@@ -83,7 +88,8 @@ public class PaintScreen implements Screen {
     }
 
     @Override
-    public void render(float delta) {
+    public void render(float delta)
+    {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(Gdx.gl20.GL_COLOR_BUFFER_BIT);
 
@@ -104,28 +110,35 @@ public class PaintScreen implements Screen {
         stage.draw();
     }
 
-    private void handleInput() {
+    private void handleInput()
+    {
         boolean isLeftButtonPressed = Gdx.input.isButtonPressed(Input.Buttons.LEFT);
 
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT))
+        {
             Vector2 current = new Vector2(Gdx.input.getX(), Gdx.input.getY());
             game.viewport.project(current);
 
-            if (localUser.getCurrentTool() != DrawingTool.BRUSH) {
+            if (localUser.getCurrentTool() != DrawingTool.BRUSH)
+            {
                 shapeStartPosition = new Vector2(current);
                 game.viewport.unproject(shapeStartPosition);
             }
         }
 
-        if (Gdx.input.isTouched() && isLeftButtonPressed) {
+        if (Gdx.input.isTouched() && isLeftButtonPressed)
+        {
             Vector2 current = new Vector2(Gdx.input.getX(), Gdx.input.getY());
             game.viewport.project(current);
 
-            if (localUser.getCurrentTool() == DrawingTool.BRUSH) {
+            if (localUser.getCurrentTool() == DrawingTool.BRUSH)
+            {
                 DrawAction action;
-                if (lastDrawPosition != null) {
-                    action = new DrawAction(localUser.getColor(),localUser.getBrushSize(), (int) lastDrawPosition.x, (int) lastDrawPosition.y, (int) current.x, (int) current.y);
-                } else {
+                if (lastDrawPosition != null)
+                {
+                    action = new DrawAction(localUser.getColor(), localUser.getBrushSize(), (int) lastDrawPosition.x, (int) lastDrawPosition.y, (int) current.x, (int) current.y);
+                } else
+                {
                     action = new DrawAction(localUser.getColor(), localUser.getBrushSize(), (int) current.x, (int) current.y, (int) current.x, (int) current.y);
                 }
                 session.applyAction(action);
@@ -134,7 +147,8 @@ public class PaintScreen implements Screen {
         }
 
         // Detectar cuando se suelta el botón
-        if (wasLeftButtonPressed && !isLeftButtonPressed && shapeStartPosition != null) {
+        if (wasLeftButtonPressed && !isLeftButtonPressed && shapeStartPosition != null)
+        {
             Vector2 current = new Vector2(Gdx.input.getX(), Gdx.input.getY());
             game.viewport.project(current);
 
@@ -142,17 +156,20 @@ public class PaintScreen implements Screen {
             shapeStartPosition = null;
         }
 
-        if (!Gdx.input.isTouched()) {
+        if (!Gdx.input.isTouched())
+        {
             lastDrawPosition = null;
         }
 
         wasLeftButtonPressed = isLeftButtonPressed;
     }
 
-    private void createShapeAction(Vector2 start, Vector2 end) {
+    private void createShapeAction(Vector2 start, Vector2 end)
+    {
         game.viewport.unproject(start);
         game.viewport.project(end);
-        switch (localUser.getCurrentTool()) {
+        switch (localUser.getCurrentTool())
+        {
             case LINE:
                 DrawAction lineAction = new DrawAction(this.localUser.getColor(), localUser.getBrushSize(), (int) start.x, (int) start.y, (int) end.x, (int) end.y);
                 session.applyAction(lineAction);
@@ -166,7 +183,8 @@ public class PaintScreen implements Screen {
         }
     }
 
-    private void drawRectangle(Vector2 start, Vector2 end) {
+    private void drawRectangle(Vector2 start, Vector2 end)
+    {
         int minX = (int) Math.min(start.x, end.x);
         int maxX = (int) Math.max(start.x, end.x);
         int minY = (int) Math.min(start.y, end.y);
@@ -189,35 +207,44 @@ public class PaintScreen implements Screen {
         serverConnection.sendActionToServer(rightSide);
     }
 
-    private void updateBrushSettings() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP) ) {
+    private void updateBrushSettings()
+    {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP))
+        {
             localUser.incrementBrushSize();
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN))
+        {
             localUser.reduceBrushSize();
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C))
+        {
             Color current = localUser.getColor();
             Color newColor = current.equals(Color.BLACK) ? Color.WHITE : Color.BLACK;
             this.localUser.setColor(newColor);
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.B))
+        {
             this.localUser.setCurrentTool(DrawingTool.BRUSH);
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.L))
+        {
             this.localUser.setCurrentTool(DrawingTool.LINE);
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R))
+        {
             this.localUser.setCurrentTool(DrawingTool.RECTANGLE);
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.O)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.O))
+        {
             this.localUser.setCurrentTool(DrawingTool.CIRCLE);
         }
     }
 
-    private void drawCircle(Vector2 start, Vector2 end) {
+    private void drawCircle(Vector2 start, Vector2 end)
+    {
         int centerX = (int) start.x;
         int centerY = (int) start.y;
         int radius = (int) start.dst(end);
@@ -226,14 +253,16 @@ public class PaintScreen implements Screen {
         int segments = Math.max(16, radius / 2);
         Vector2 prevPoint = null;
 
-        for (int i = 0; i <= segments; i++) {
+        for (int i = 0; i <= segments; i++)
+        {
             double angle = (2 * Math.PI * i) / segments;
             int x = centerX + (int) (radius * Math.cos(angle));
             int y = centerY + (int) (radius * Math.sin(angle));
 
             Vector2 currentPoint = new Vector2(x, y);
 
-            if (prevPoint != null) {
+            if (prevPoint != null)
+            {
                 DrawAction circleSegment = new DrawAction(localUser.getColor(), localUser.getBrushSize(), (int) prevPoint.x, (int) prevPoint.y, x, y);
                 session.applyAction(circleSegment);
                 serverConnection.sendActionToServer(circleSegment);
@@ -244,7 +273,8 @@ public class PaintScreen implements Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(int width, int height)
+    {
         game.viewport.update(width, height, false);
         stage.getViewport().update(width, height, true);
 
@@ -265,13 +295,29 @@ public class PaintScreen implements Screen {
         oldCanvas.dispose();
     }
 
-    @Override public void show() {}
-    @Override public void hide() {}
-    @Override public void pause() {}
-    @Override public void resume() {}
+    @Override
+    public void show()
+    {
+    }
 
     @Override
-    public void dispose() {
+    public void hide()
+    {
+    }
+
+    @Override
+    public void pause()
+    {
+    }
+
+    @Override
+    public void resume()
+    {
+    }
+
+    @Override
+    public void dispose()
+    {
         session.getCanvas().dispose();
         stage.dispose();
         serverConnection.disconnect();

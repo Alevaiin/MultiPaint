@@ -10,23 +10,28 @@ public class ConnectionsManager
 
     private static ConnectionsManager connectionManager;
 
-    private ConnectionsManager(){
+    private ConnectionsManager()
+    {
         this.clients = new ArrayList<>();
     }
 
-    public static ConnectionsManager getConnectionManager(){
-        if(connectionManager == null)
+    public static ConnectionsManager getConnectionManager()
+    {
+        if (connectionManager == null)
             connectionManager = new ConnectionsManager();
         return connectionManager;
     }
 
     public void addClient(Socket clientSocket)
     {
-        Thread acceptThread = new Thread( () -> {
+        Thread acceptThread = new Thread(() ->
+        {
             ClientConnection client = new ClientConnection(clientSocket);
-            try{
+            try
+            {
                 acceptConnection(client);
-            }catch (ClientRejectedException e){
+            } catch (ClientRejectedException e)
+            {
                 System.out.println("Error al aceptar nuevo cliente");
             }
         });
@@ -44,11 +49,13 @@ public class ConnectionsManager
         clientConnection.start();
     }
 
-    public void broadcast(String message, String from){
-        this.clients.stream().filter( clientConnection -> !clientConnection.getClientId().equals(from) ).forEach(clientConnection -> clientConnection.send(message));
+    public void broadcast(String message, String from)
+    {
+        this.clients.stream().filter(clientConnection -> !clientConnection.getClientId().equals(from)).forEach(clientConnection -> clientConnection.send(message));
     }
 
-    public void removeClient(ClientConnection clientConnection){
+    public void removeClient(ClientConnection clientConnection)
+    {
         this.clients.remove(clientConnection);
     }
 }

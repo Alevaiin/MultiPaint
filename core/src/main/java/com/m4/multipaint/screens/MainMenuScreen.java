@@ -23,7 +23,8 @@ public class MainMenuScreen implements Screen
     private Stage stage;
     private Skin skin;
 
-    public MainMenuScreen(MultiPaint game){
+    public MainMenuScreen(MultiPaint game)
+    {
 
         this.game = game;
         this.stage = new Stage(new ScreenViewport());
@@ -44,45 +45,57 @@ public class MainMenuScreen implements Screen
         TextField userNameField = new TextField(Constants.DEFAULT_USER_NAME, skin);
 
         TextButton startButton = new TextButton("Start Drawing", skin);
-        startButton.addListener(new ChangeListener() {
+        startButton.addListener(new ChangeListener()
+        {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor)
+            {
                 String ip = ipField.getText();
                 String portText = portField.getText();
                 String userName = userNameField.getText();
 
-                if (!isValidIp(ip)) {
+                if (!isValidIp(ip))
+                {
                     showErrorDialog("La direccion IP no es válida.");
                     return;
                 }
 
-                if (!isValidPort(portText)) {
+                if (!isValidPort(portText))
+                {
                     showErrorDialog("El puerto debe ser un numero entre 1 y 65535.");
                     return;
                 }
 
                 int port = Integer.parseInt(portText);
 
-                new Thread(() -> {
-                    try {
+                new Thread(() ->
+                {
+                    try
+                    {
                         startButton.setDisabled(true);
                         startButton.setText("Connecting");
                         ServerConnection testConnection = new ServerConnection(userName, ip, port);
                         testConnection.connect();
-                        if (testConnection.isConnected()) {
-                            Gdx.app.postRunnable(() -> {
+                        if (testConnection.isConnected())
+                        {
+                            Gdx.app.postRunnable(() ->
+                            {
                                 game.setScreen(new PaintScreen(game, userName, testConnection));
                                 dispose();
                             });
-                        } else {
-                            Gdx.app.postRunnable(() -> {
+                        } else
+                        {
+                            Gdx.app.postRunnable(() ->
+                            {
                                 showErrorDialog("No se pudo conectar al servidor, revise los datos de conexion.");
                                 startButton.setDisabled(false);
                                 startButton.setText("Start Drawing");
                             });
                         }
-                    } catch (Exception e) {
-                        Gdx.app.postRunnable(() -> {
+                    } catch (Exception e)
+                    {
+                        Gdx.app.postRunnable(() ->
+                        {
                             showErrorDialog("No se pudo conectar al servidor, revise los datos de conexion.");
                             startButton.setDisabled(false);
                             startButton.setText("Start Drawing");
@@ -166,25 +179,32 @@ public class MainMenuScreen implements Screen
     }
 
     @Override
-    public void dispose() {
+    public void dispose()
+    {
         stage.dispose();
         skin.dispose();
     }
 
-    private boolean isValidIp(String ip) {
+    private boolean isValidIp(String ip)
+    {
         //https://stackoverflow.com/questions/5284147/validating-ipv4-addresses-with-regexp
         return ip.matches(Constants.IP_VALIDATION_REGEX);
     }
 
-    private boolean isValidPort(String portText) {
-        try {
+    private boolean isValidPort(String portText)
+    {
+        try
+        {
             int port = Integer.parseInt(portText);
             return port >= Constants.MIN_PORT && port <= Constants.MAX_PORT;
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException e)
+        {
             return false;
         }
     }
-    private void showErrorDialog(String message) {
+
+    private void showErrorDialog(String message)
+    {
         Dialog dialog = new Dialog("Error", skin);
         dialog.text(message);
         dialog.button("OK");

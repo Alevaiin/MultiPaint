@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.*;
 import com.m4.multipaint.screens.MainMenuScreen;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
+/**
+ * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
+ */
 public class MultiPaint extends Game
 {
     public SpriteBatch batch;
@@ -16,7 +18,8 @@ public class MultiPaint extends Game
     public ShapeRenderer shapeRenderer;
 
     @Override
-    public void create() {
+    public void create()
+    {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         font = new BitmapFont();
@@ -25,11 +28,13 @@ public class MultiPaint extends Game
         this.setScreen(new MainMenuScreen(this));
     }
 
-    public void render() {
+    public void render()
+    {
         super.render(); // important!
     }
 
-    public void dispose() {
+    public void dispose()
+    {
         batch.dispose();
         font.dispose();
         shapeRenderer.dispose();
@@ -37,7 +42,8 @@ public class MultiPaint extends Game
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(int width, int height)
+    {
         viewport.update(width, height, true);
         super.resize(width, height);
     }

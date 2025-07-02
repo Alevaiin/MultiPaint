@@ -2,7 +2,9 @@ package com.m4.multipaint;
 
 public class Constants
 {
-    private Constants(){}
+    private Constants()
+    {
+    }
 
     //BRUSH_CONSTANTS
     public final static int DEFAULT_BRUSH_SIZE = 2;

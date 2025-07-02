@@ -24,7 +24,8 @@ public class ClientConnection extends Thread
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             clientId = readNextMessage();
-            if(clientId == null){
+            if (clientId == null)
+            {
                 throw new ClientRejectedException("No se recibio el ID de parte del cliente");
             }
         } catch (IOException e)
@@ -43,8 +44,9 @@ public class ClientConnection extends Thread
                 String message = readNextMessage();
                 processMessage(message);
             }
-        }catch (ClientDisconnectedException | SocketTimeoutException e){
-            System.out.println("Se ha perdido la conexion con el cliente "+clientId);
+        } catch (ClientDisconnectedException | SocketTimeoutException e)
+        {
+            System.out.println("Se ha perdido la conexion con el cliente " + clientId);
         }
         System.out.println(clientId + " se ha desconectado");
         closeConnection();
@@ -54,7 +56,7 @@ public class ClientConnection extends Thread
     public void processMessage(String message)
     {
         System.out.println(clientId + ": " + message);
-        if(message == null)
+        if (message == null)
         {
             this.closeConnection();
             return;
@@ -68,11 +70,11 @@ public class ClientConnection extends Thread
         try
         {
             inputLine = in.readLine();
-        }catch (SocketTimeoutException e){
+        } catch (SocketTimeoutException e)
+        {
             System.out.println(clientId + " inactivo");
             throw e;
-        }
-        catch (IOException e)
+        } catch (IOException e)
         {
             System.out.println("Error al leer del socket");
             throw new ClientDisconnectedException(e.getMessage());

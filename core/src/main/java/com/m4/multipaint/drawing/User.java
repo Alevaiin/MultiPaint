@@ -9,45 +9,55 @@ public class User
     private final Brush brush;
     private DrawingTool currentTool;
 
-    public User(String id, Color color) {
+    public User(String id, Color color)
+    {
         this.id = id;
         this.brush = new Brush(color);
         this.currentTool = DrawingTool.BRUSH;
     }
 
-    public String getId() {
+    public String getId()
+    {
         return id;
     }
 
-    public Brush getBrush() {
+    public Brush getBrush()
+    {
         return brush;
     }
 
-    public Color getColor() {
+    public Color getColor()
+    {
         return this.brush.getColor();
     }
 
-    public void setColor(Color color) {
+    public void setColor(Color color)
+    {
         this.brush.setColor(color);
     }
 
-    public int getBrushSize() {
+    public int getBrushSize()
+    {
         return this.brush.getSize();
     }
 
-    public void reduceBrushSize(){
+    public void reduceBrushSize()
+    {
         this.brush.setSize(this.brush.getSize() - Constants.DELTA_BRUSH_SIZE);
     }
 
-    public void incrementBrushSize(){
+    public void incrementBrushSize()
+    {
         this.brush.setSize(this.brush.getSize() + Constants.DELTA_BRUSH_SIZE);
     }
 
-    public void setCurrentTool(DrawingTool drawingTool){
+    public void setCurrentTool(DrawingTool drawingTool)
+    {
         this.currentTool = drawingTool;
     }
 
-    public DrawingTool getCurrentTool(){
+    public DrawingTool getCurrentTool()
+    {
         return this.currentTool;
     }
 

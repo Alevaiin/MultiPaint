@@ -16,7 +16,8 @@ public class ColorsGrid
     ColorButton greenButton;
     ColorButton whiteButton;
 
-    public ColorsGrid(User user, Skin skin){
+    public ColorsGrid(User user, Skin skin)
+    {
         blueButton = new ColorButton(Color.BLUE, "Blue", user, skin, this);
         redButton = new ColorButton(Color.RED, "Red", user, skin, this);
         yellowButton = new ColorButton(Color.YELLOW, "Yellow", user, skin, this);
@@ -27,16 +28,18 @@ public class ColorsGrid
         setSelectedButton(blackButton);
     }
 
-    public void setSelectedButton(ColorButton selectedColor){
-        blueButton.setColor(blueButton == selectedColor? Color.LIGHT_GRAY:Color.WHITE);
-        redButton.setColor(redButton == selectedColor? Color.LIGHT_GRAY:Color.WHITE);
-        yellowButton.setColor(yellowButton == selectedColor? Color.LIGHT_GRAY:Color.WHITE);
-        blackButton.setColor(blackButton == selectedColor? Color.LIGHT_GRAY:Color.WHITE);
-        greenButton.setColor(greenButton == selectedColor? Color.LIGHT_GRAY:Color.WHITE);
-        whiteButton.setColor(whiteButton == selectedColor? Color.LIGHT_GRAY:Color.WHITE);
+    public void setSelectedButton(ColorButton selectedColor)
+    {
+        blueButton.setColor(blueButton == selectedColor ? Color.LIGHT_GRAY : Color.WHITE);
+        redButton.setColor(redButton == selectedColor ? Color.LIGHT_GRAY : Color.WHITE);
+        yellowButton.setColor(yellowButton == selectedColor ? Color.LIGHT_GRAY : Color.WHITE);
+        blackButton.setColor(blackButton == selectedColor ? Color.LIGHT_GRAY : Color.WHITE);
+        greenButton.setColor(greenButton == selectedColor ? Color.LIGHT_GRAY : Color.WHITE);
+        whiteButton.setColor(whiteButton == selectedColor ? Color.LIGHT_GRAY : Color.WHITE);
     }
 
-    public void addToUI(UserInterface ui){
+    public void addToUI(UserInterface ui)
+    {
         ui.add(blueButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);
         ui.add(redButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);
         ui.add(yellowButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);

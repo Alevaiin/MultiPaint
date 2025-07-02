@@ -20,38 +20,46 @@ public class ServerConnection extends Thread
     BufferedReader in;
     DrawSession drawSession;
 
-    public ServerConnection(String clientId, String ip, int port){
+    public ServerConnection(String clientId, String ip, int port)
+    {
         SocketHints hints = new SocketHints();
-        hints.connectTimeout=2500;
-        socket = Gdx.net.newClientSocket(Net.Protocol.TCP,ip, port, hints);
+        hints.connectTimeout = 2500;
+        socket = Gdx.net.newClientSocket(Net.Protocol.TCP, ip, port, hints);
         this.clientId = clientId;
     }
 
-    public void connect() {
-        try {
+    public void connect()
+    {
+        try
+        {
             int attempts = 0;
             int maxAttempts = 5;
 
-            while (!socket.isConnected() && attempts < maxAttempts) {
+            while (!socket.isConnected() && attempts < maxAttempts)
+            {
                 Gdx.app.log("NETWORK", "Intentando conectar... intento #" + (attempts + 1));
                 Thread.sleep(500); // Esperar medio segundo antes de intentar de nuevo
                 attempts++;
             }
 
-            if (socket.isConnected()) {
+            if (socket.isConnected())
+            {
                 Gdx.app.log("NETWORK", "Conectado");
                 this.isConnected = true;
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 sendToServer(clientId);
-            } else {
+            } else
+            {
                 Gdx.app.log("NETWORK", "No se pudo conectar al servidor");
             }
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             Gdx.app.error("NETWORK", "Error al intentar conectar: " + e.getMessage(), e);
         }
     }
 
-    public boolean isConnected() {
+    public boolean isConnected()
+    {
         return socket != null && socket.isConnected() && this.isConnected;
     }
 
@@ -63,20 +71,24 @@ public class ServerConnection extends Thread
     }
 
     @Override
-    public void run(){
+    public void run()
+    {
 
-        while (this.isConnected()){
+        while (this.isConnected())
+        {
             in.lines().forEach(this::processMessage);
         }
         this.disconnect();
 
     }
 
-    private void processMessage(String message){
-        Gdx.app.log("NETWORK", "Receiving: "+message);
-        if(drawSession != null){
+    private void processMessage(String message)
+    {
+        Gdx.app.log("NETWORK", "Receiving: " + message);
+        if (drawSession != null)
+        {
             DrawAction incomingAction = MessageParser.parseDrawAction(message);
-            Gdx.app.postRunnable( () -> drawSession.applyRemoteAction(incomingAction));
+            Gdx.app.postRunnable(() -> drawSession.applyRemoteAction(incomingAction));
         }
     }
 
@@ -86,17 +98,21 @@ public class ServerConnection extends Thread
         sendToServer(action.toString());
     }
 
-    public void sendToServer(String message){
-        try{
-            Gdx.app.log("NETWORK", "Sending: "+message);
-            socket.getOutputStream().write((message+"\n").getBytes(StandardCharsets.UTF_8));
+    public void sendToServer(String message)
+    {
+        try
+        {
+            Gdx.app.log("NETWORK", "Sending: " + message);
+            socket.getOutputStream().write((message + "\n").getBytes(StandardCharsets.UTF_8));
             socket.getOutputStream().flush();
-        }catch (IOException e){
+        } catch (IOException e)
+        {
             Gdx.app.log("ERROR", "Error al comunicarse con el server");
         }
     }
 
-    public void setDrawSession(DrawSession drawSession){
+    public void setDrawSession(DrawSession drawSession)
+    {
         this.drawSession = drawSession;
     }
 }
