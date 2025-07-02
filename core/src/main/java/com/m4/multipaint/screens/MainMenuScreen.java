@@ -114,14 +114,14 @@ public class MainMenuScreen implements Screen
             }
         });
 
-        table.add(ipLabel).left();
-        table.add(ipField).width(200).padBottom(10).row();
+        table.add(ipLabel);
+        table.add(ipField).width(200).pad(10).row();
 
-        table.add(portLabel).left();
-        table.add(portField).width(200).padBottom(10).row();
+        table.add(portLabel);
+        table.add(portField).width(200).pad(10).row();
 
-        table.add(userNameLabel).left();
-        table.add(userNameField).width(200).padBottom(10).row();
+        table.add(userNameLabel);
+        table.add(userNameField).width(200).pad(10).row();
 
         table.add(startButton).colspan(2).center();
     }
