@@ -42,10 +42,12 @@ public class ConnectionsManager
     {
         if (clients.contains(clientConnection))
         {
+            clientConnection.send("User Name already in use");
             clientConnection.closeConnection();
             throw new ClientRejectedException("El cliente " + clientConnection.getClientId() + " ya esta conectado");
         }
         this.clients.add(clientConnection);
+        clientConnection.send("OK");
         clientConnection.start();
     }
 

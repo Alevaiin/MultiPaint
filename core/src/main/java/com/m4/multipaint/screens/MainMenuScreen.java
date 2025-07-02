@@ -76,10 +76,15 @@ public class MainMenuScreen implements Screen
                         startButton.setText("Connecting");
                         ServerConnection testConnection = new ServerConnection(userName, ip, port);
                         testConnection.connect();
-                        if (testConnection.isConnected())
-                        {
-                            Gdx.app.postRunnable(() ->
-                            {
+                        String response = testConnection.readNextMessage();
+                        if (!response.equals("OK")){
+                            Gdx.app.postRunnable(() -> {
+                                showErrorDialog(response);
+                                startButton.setDisabled(false);
+                                startButton.setText("Start Drawing");
+                            });
+                        }else if (testConnection.isConnected()) {
+                            Gdx.app.postRunnable(() -> {
                                 game.setScreen(new PaintScreen(game, userName, testConnection));
                                 dispose();
                             });
