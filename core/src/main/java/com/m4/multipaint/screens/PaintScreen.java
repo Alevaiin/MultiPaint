@@ -218,13 +218,6 @@ public class PaintScreen implements Screen
             localUser.reduceBrushSize();
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.C))
-        {
-            Color current = localUser.getColor();
-            Color newColor = current.equals(Color.BLACK) ? Color.WHITE : Color.BLACK;
-            this.localUser.setColor(newColor);
-        }
-
         if (Gdx.input.isKeyJustPressed(Input.Keys.B))
         {
             this.localUser.setCurrentTool(DrawingTool.BRUSH);
