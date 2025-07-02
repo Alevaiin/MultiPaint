@@ -1,49 +1,52 @@
 package com.m4.multipaint.ui.buttons;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.m4.multipaint.Constants;
 import com.m4.multipaint.drawing.User;
 import com.m4.multipaint.ui.UserInterface;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ColorsGrid
 {
 
-    ColorButton blueButton;
-    ColorButton redButton;
-    ColorButton yellowButton;
-    ColorButton blackButton;
-    ColorButton greenButton;
-    ColorButton whiteButton;
+    List<ColorButton> buttons;
 
-    public ColorsGrid(User user, Skin skin)
+    public ColorsGrid(User user)
     {
-        blueButton = new ColorButton(Color.BLUE, "Blue", user, skin, this);
-        redButton = new ColorButton(Color.RED, "Red", user, skin, this);
-        yellowButton = new ColorButton(Color.YELLOW, "Yellow", user, skin, this);
-        blackButton = new ColorButton(Color.BLACK, "Black", user, skin, this);
-        greenButton = new ColorButton(Color.GREEN, "Green", user, skin, this);
-        whiteButton = new ColorButton(Color.WHITE, "White", user, skin, this);
+        ColorButton defaultButton = new ColorButton(Color.BLACK, user, this);
 
-        setSelectedButton(blackButton);
+        this.buttons = new ArrayList<>();
+        this.buttons.add(defaultButton);
+        this.buttons.add(new ColorButton(Color.BLUE, user, this));
+        this.buttons.add(new ColorButton(Color.RED, user, this));
+        this.buttons.add(new ColorButton(Color.YELLOW, user, this));
+        this.buttons.add(new ColorButton(Color.GREEN, user, this));
+        this.buttons.add(new ColorButton(Color.WHITE, user, this));
+
+        setSelectedButton(defaultButton);
     }
 
     public void setSelectedButton(ColorButton selectedColor)
     {
-        blueButton.setColor(blueButton == selectedColor ? Color.LIGHT_GRAY : Color.WHITE);
-        redButton.setColor(redButton == selectedColor ? Color.LIGHT_GRAY : Color.WHITE);
-        yellowButton.setColor(yellowButton == selectedColor ? Color.LIGHT_GRAY : Color.WHITE);
-        blackButton.setColor(blackButton == selectedColor ? Color.LIGHT_GRAY : Color.WHITE);
-        greenButton.setColor(greenButton == selectedColor ? Color.LIGHT_GRAY : Color.WHITE);
-        whiteButton.setColor(whiteButton == selectedColor ? Color.LIGHT_GRAY : Color.WHITE);
+        for (ColorButton button : this.buttons ){
+            button.clearActions();
+            if( button == selectedColor){
+                button.addAction(Actions.scaleTo(Constants.BUTTON_SELECTED_SCALE, Constants.BUTTON_SELECTED_SCALE, Constants.BUTTON_SELECTED_ANIMATION_DURATION));
+            }else{
+                button.addAction(Actions.scaleTo(1f, 1f, Constants.BUTTON_SELECTED_ANIMATION_DURATION));
+            }
+        }
     }
 
     public void addToUI(UserInterface ui)
     {
-        ui.add(blueButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);
-        ui.add(redButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);
-        ui.add(yellowButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);
-        ui.add(blackButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);
-        ui.add(greenButton).width(Constants.BUTTON_WIDTH_NORMAL).height(Constants.BUTTON_HEIGHT_NORMAL).pad(Constants.BUTTON_PADDING);
+        for (ColorButton button : this.buttons )
+        {
+            ui.add(button).minSize(Constants.COLOR_BUTTON_SIZE).pad(Constants.BUTTON_PADDING);
+            button.setOrigin(button.getWidth() / 2, button.getHeight() / 2);
+        }
     }
 }

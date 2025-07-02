@@ -6,14 +6,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.m4.multipaint.Constants;
+import com.m4.multipaint.ui.UserInterface;
 
 public class FullScreenButton extends TextButton
 {
     private boolean isFullScreen = false;
 
-    public FullScreenButton(Skin skin)
+    public FullScreenButton(Skin skin, UserInterface userInterface)
     {
-        super("Enter Fullscreen", skin);
+        super("Fullscreen", skin);
         this.addListener(new ChangeListener()
         {
             @Override
@@ -22,11 +23,13 @@ public class FullScreenButton extends TextButton
                 if (!isFullScreen)
                 {
                     Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+                    userInterface.setFullScreenMode();
                     isFullScreen = true;
-                    setText("Exit Fullscreen");
+                    setText("Windowed");
                 } else
                 {
                     Gdx.graphics.setWindowedMode(Constants.SCREEN_RESOLUTION_W, Constants.SCREEN_RESOLUTION_H);
+                    userInterface.setWindowedMode();
                     isFullScreen = false;
                     setText("Enter Fullscreen");
                 }

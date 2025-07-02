@@ -4,7 +4,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.m4.multipaint.drawing.Brush;
 import com.m4.multipaint.drawing.User;
 
 public class IncreaseBrushButton extends TextButton
@@ -12,7 +11,7 @@ public class IncreaseBrushButton extends TextButton
 
     public IncreaseBrushButton(Skin skin, User user)
     {
-        super("+ Brush", skin);
+        super("+", skin);
         this.addListener(new ChangeListener()
         {
             @Override
