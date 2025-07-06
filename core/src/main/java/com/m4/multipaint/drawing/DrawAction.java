@@ -2,35 +2,29 @@ package com.m4.multipaint.drawing;
 
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-public class DrawAction
+public abstract class DrawAction
 {
-    private final int startX;
-    private final int startY;
-    private final int endX;
-    private final int endY;
-    private final Color color;
-    private final int size;
+    protected final int startX;
+    protected final int startY;
+    protected final Color color;
+    protected final int size;
 
 
-    public DrawAction(Color color, int size, int startX, int startY, int endX, int endY)
+    public DrawAction(Color color, int size, int startX, int startY)
     {
         this.size = size;
         this.color = color;
         this.startX = startX;
         this.startY = startY;
-        this.endX = endX;
-        this.endY = endY;
     }
 
-    public void apply(Canvas canvas)
-    {
-        canvas.drawLine(color, size, startX, startY, endX, endY);
-    }
+    public abstract void apply(Canvas canvas);
 
     @Override
     public String toString()
     {
-        return String.format("%s|%s|%s|%s|%s|%s", this.color, this.size, startX, startY, endX, endY);
+        return String.format("%s|%s|%s|%s", this.color, this.size, startX, startY);
     }
 }

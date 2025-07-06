@@ -29,7 +29,7 @@ public class DrawSession
 
     public void applyAction(DrawAction action)
     {
-        action.apply(canvas);
+        canvas.draw(action);
         if (this.serverConnection != null)
             serverConnection.sendActionToServer(action);
     }

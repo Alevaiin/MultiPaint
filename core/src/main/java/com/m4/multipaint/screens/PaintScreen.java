@@ -55,11 +55,10 @@ public class PaintScreen implements Screen
     {
         if (shapeStartPosition != null && Gdx.input.isButtonPressed(Input.Buttons.LEFT))
         {
-            Vector2 currentPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-            game.viewport.unproject(currentPos);
+            Vector2 currentPos = game.viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+
 
             // Usar ShapeRenderer para dibujar la previsualización
-            game.shapeRenderer.setProjectionMatrix(game.viewport.getCamera().combined);
             game.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             game.shapeRenderer.setColor(localUser.getColor().r, localUser.getColor().g,
                 localUser.getColor().b, 0.5f); // Semi-transparente
@@ -117,29 +116,27 @@ public class PaintScreen implements Screen
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT))
         {
             Vector2 current = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-            game.viewport.project(current);
 
             if (localUser.getCurrentTool() != DrawingTool.BRUSH)
             {
-                shapeStartPosition = new Vector2(current);
-                game.viewport.unproject(shapeStartPosition);
+                shapeStartPosition = game.viewport.unproject(current);
             }
         }
 
         if (Gdx.input.isTouched() && isLeftButtonPressed)
         {
             Vector2 current = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-            game.viewport.project(current);
+            current = game.viewport.unproject(current);
 
             if (localUser.getCurrentTool() == DrawingTool.BRUSH)
             {
                 DrawAction action;
                 if (lastDrawPosition != null)
                 {
-                    action = new DrawAction(localUser.getColor(), localUser.getBrushSize(), (int) lastDrawPosition.x, (int) lastDrawPosition.y, (int) current.x, (int) current.y);
+                    action = new DrawLine(localUser.getColor(), localUser.getBrushSize(), lastDrawPosition, current);
                 } else
                 {
-                    action = new DrawAction(localUser.getColor(), localUser.getBrushSize(), (int) current.x, (int) current.y, (int) current.x, (int) current.y);
+                    action = new DrawLine(localUser.getColor(), localUser.getBrushSize(), current, current);
                 }
                 session.applyAction(action);
                 lastDrawPosition = current;
@@ -150,9 +147,8 @@ public class PaintScreen implements Screen
         if (wasLeftButtonPressed && !isLeftButtonPressed && shapeStartPosition != null)
         {
             Vector2 current = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-            game.viewport.project(current);
 
-            createShapeAction(shapeStartPosition, current);
+            createShapeAction(shapeStartPosition, game.viewport.unproject(current));
             shapeStartPosition = null;
         }
 
@@ -166,19 +162,18 @@ public class PaintScreen implements Screen
 
     private void createShapeAction(Vector2 start, Vector2 end)
     {
-        game.viewport.unproject(start);
-        game.viewport.project(end);
         switch (localUser.getCurrentTool())
         {
             case LINE:
-                DrawAction lineAction = new DrawAction(this.localUser.getColor(), localUser.getBrushSize(), (int) start.x, (int) start.y, (int) end.x, (int) end.y);
+                DrawAction lineAction = new DrawLine(this.localUser.getColor(), localUser.getBrushSize(), (int) start.x, (int) start.y, (int) end.x, (int) end.y);
                 session.applyAction(lineAction);
                 break;
             case RECTANGLE:
                 drawRectangle(start, end);
                 break;
             case CIRCLE:
-                drawCircle(start, end);
+                DrawAction circleAction = new DrawCircle(this.localUser.getColor(), localUser.getBrushSize(),start,start.dst(end));
+                session.applyAction(circleAction);
                 break;
         }
     }
@@ -191,10 +186,10 @@ public class PaintScreen implements Screen
         int maxY = (int) Math.max(start.y, end.y);
 
         // Dibujar los cuatro lados del rectángulo
-        DrawAction topSide = new DrawAction(localUser.getColor(), localUser.getBrushSize(), minX, maxY, maxX, maxY);
-        DrawAction bottomSide = new DrawAction(localUser.getColor(), localUser.getBrushSize(), minX, minY, maxX, minY);
-        DrawAction leftSide = new DrawAction(localUser.getColor(), localUser.getBrushSize(), minX, minY, minX, maxY);
-        DrawAction rightSide = new DrawAction(localUser.getColor(), localUser.getBrushSize(), maxX, minY, maxX, maxY);
+        DrawAction topSide = new DrawLine(localUser.getColor(), localUser.getBrushSize(), minX, maxY, maxX, maxY);
+        DrawAction bottomSide = new DrawLine(localUser.getColor(), localUser.getBrushSize(), minX, minY, maxX, minY);
+        DrawAction leftSide = new DrawLine(localUser.getColor(), localUser.getBrushSize(), minX, minY, minX, maxY);
+        DrawAction rightSide = new DrawLine(localUser.getColor(), localUser.getBrushSize(), maxX, minY, maxX, maxY);
 
         session.applyAction(topSide);
         session.applyAction(bottomSide);
@@ -256,7 +251,7 @@ public class PaintScreen implements Screen
 
             if (prevPoint != null)
             {
-                DrawAction circleSegment = new DrawAction(localUser.getColor(), localUser.getBrushSize(), (int) prevPoint.x, (int) prevPoint.y, x, y);
+                DrawAction circleSegment = new DrawLine(localUser.getColor(), localUser.getBrushSize(), (int) prevPoint.x, (int) prevPoint.y, x, y);
                 session.applyAction(circleSegment);
                 serverConnection.sendActionToServer(circleSegment);
             }
@@ -270,22 +265,6 @@ public class PaintScreen implements Screen
     {
         game.viewport.update(width, height, false);
         stage.getViewport().update(width, height, true);
-
-        Canvas oldCanvas = session.getCanvas();
-        Canvas newCanvas = new Canvas(width, height);
-
-        // Obtener dimensiones del pixmap del canvas anterior
-        int oldWidth = oldCanvas.getPixmap().getWidth();
-        int oldHeight = oldCanvas.getPixmap().getHeight();
-
-        // Dibujar el canvas anterior escalado al nuevo tamaño
-        newCanvas.getPixmap().drawPixmap(oldCanvas.getPixmap(),
-            0, 0, oldWidth, oldHeight,
-            0, 0, width, height);
-
-        session.setCanvas(newCanvas);
-
-        oldCanvas.dispose();
     }
 
     @Override

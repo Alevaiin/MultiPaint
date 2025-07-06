@@ -1,86 +1,89 @@
 package com.m4.multipaint.drawing;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Matrix4;
 
 public class Canvas
 {
-    private Pixmap pixmap;
-    private Texture texture;
-    private boolean dirty = true;
+    private final FrameBuffer frameBuffer;
+    private final int width;
+    private final int height;
+    private final ShapeRenderer shapeRenderer;
 
 
     public Canvas(int width, int height)
     {
-
-        pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.WHITE);
-        pixmap.fill();
-        pixmap.setColor(Color.BLACK);
-        texture = new Texture(pixmap);
+        this.width = width;
+        this.height = height;
+        frameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, width, height, false);
+        shapeRenderer = new ShapeRenderer();
+        shapeRenderer.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, width, height));
+        clear();
     }
 
-    public void drawPoint(Brush brush, int x, int y)
-    {
-        brush.apply(pixmap, x, y);
-        dirty = true;
+    public void clear() {
+        frameBuffer.begin();
+        Gdx.gl.glClearColor(1, 1, 1, 1); // Fondo blanco
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        frameBuffer.end();
     }
 
-    public void drawLine(Color color, int size, int startX, int startY, int endX, int endY)
-    {
-        int deltaX = Math.abs(endX - startX);
-        int deltaY = Math.abs(endY - startY);
-        int stepX = startX < endX ? 1 : -1;
-        int stepY = startY < endY ? 1 : -1;
-        int error = deltaX - deltaY;
-
-        pixmap.setColor(color); //TODO: Chequear sincronziacion, posible race condition
-        while (true)
-        {
-            pixmap.fillCircle(startX, startY, size);
-            if (startX == endX && startY == endY) break;
-
-            int doubleError = 2 * error;
-
-            if (doubleError > -deltaY)
-            {
-                error -= deltaY;
-                startX += stepX;
-            }
-
-            if (doubleError < deltaX)
-            {
-                error += deltaX;
-                startY += stepY;
-            }
-        }
-
-        dirty = true;
+    private ShapeRenderer fillRectangle(int startX, int startY, int width, int height){
+        ShapeRenderer shape = new ShapeRenderer();
+        shape.begin(ShapeRenderer.ShapeType.Filled);
+        shape.setColor(Color.WHITE);
+        shape.rect((float) startX, (float) startY, (float) width, (float) height);
+        shape.end();
+        return shape;
     }
+
+
+    public void draw(DrawAction drawAction){
+        frameBuffer.begin();
+        drawAction.apply(this);
+        frameBuffer.end();
+    }
+
 
     public void render(SpriteBatch batch)
     {
-        if (dirty)
-        {
-            if (texture != null) texture.dispose();
-            texture = new Texture(pixmap);
-            dirty = false;
-        }
-
-        batch.draw(texture, 0, 0);
+        batch.draw(
+            frameBuffer.getColorBufferTexture(),
+            0, 0, width, height,
+            0, 0, 1, 1
+        );
     }
 
     public void dispose()
     {
-        pixmap.dispose();
-        texture.dispose();
+        this.frameBuffer.dispose();
+        this.shapeRenderer.dispose();
     }
 
-    public Pixmap getPixmap()
-    {
-        return pixmap;
+    public void copyFrom(Canvas oldCanvas) {
+        frameBuffer.begin();
+        SpriteBatch batch = new SpriteBatch();
+        batch.begin();
+        // Dibuja el contenido del canvas viejo escalado al nuevo tamaño
+        batch.draw(
+            oldCanvas.frameBuffer.getColorBufferTexture(),
+            0, 0, width, height, // destino
+            0, 0, 1, 1           // u, v, u2, v2
+        );
+        batch.end();
+        batch.dispose();
+        frameBuffer.end();
+    }
+
+    public ShapeRenderer getShapeRenderer() {
+        return shapeRenderer;
     }
 
 }
