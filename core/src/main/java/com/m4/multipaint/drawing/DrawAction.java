@@ -2,7 +2,6 @@ package com.m4.multipaint.drawing;
 
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public abstract class DrawAction
 {

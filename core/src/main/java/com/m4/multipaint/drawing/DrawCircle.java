@@ -8,12 +8,7 @@ public class DrawCircle extends DrawAction
 {
 
     Vector2 center;
-    private float radius;
-
-    public DrawCircle(Color color, int size, int startX, int startY)
-    {
-        super(color, size, startX, startY);
-    }
+    private final float radius;
 
     public DrawCircle(Color color, int size, Vector2 center, float radius){
         super(color,size,0,0);

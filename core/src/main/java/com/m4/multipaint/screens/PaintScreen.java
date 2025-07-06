@@ -231,35 +231,6 @@ public class PaintScreen implements Screen
         }
     }
 
-    private void drawCircle(Vector2 start, Vector2 end)
-    {
-        int centerX = (int) start.x;
-        int centerY = (int) start.y;
-        int radius = (int) start.dst(end);
-
-        // Aproximar círculo con múltiples líneas
-        int segments = Math.max(16, radius / 2);
-        Vector2 prevPoint = null;
-
-        for (int i = 0; i <= segments; i++)
-        {
-            double angle = (2 * Math.PI * i) / segments;
-            int x = centerX + (int) (radius * Math.cos(angle));
-            int y = centerY + (int) (radius * Math.sin(angle));
-
-            Vector2 currentPoint = new Vector2(x, y);
-
-            if (prevPoint != null)
-            {
-                DrawAction circleSegment = new DrawLine(localUser.getColor(), localUser.getBrushSize(), (int) prevPoint.x, (int) prevPoint.y, x, y);
-                session.applyAction(circleSegment);
-                serverConnection.sendActionToServer(circleSegment);
-            }
-
-            prevPoint = currentPoint;
-        }
-    }
-
     @Override
     public void resize(int width, int height)
     {
